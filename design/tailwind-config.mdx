@@ -1,0 +1,387 @@
+---
+title: "Tailwind Configuration"
+description: "Complete Tailwind CSS configuration guide for Paper UI design system"
+---
+
+This guide provides complete Tailwind CSS configuration for implementing the Paper UI design system across MetaCogna Suite applications.
+
+## Overview
+
+Paper UI requires custom Tailwind configuration to support:
+- Semantic color tokens (Ink, Paper, Surface, Accent)
+- Hard shadows (4px 4px 0px 0px)
+- Typography system (Serif, Sans-Serif, Monospace)
+- Border radius constraints (max 2px)
+- Dark mode support
+
+## Recommended Approach: CSS Custom Properties
+
+The recommended approach uses CSS custom properties for better dark mode support and easier theme management.
+
+### HTML Setup
+
+```html
+<style>
+  :root {
+    --color-ink: 24 24 27;        /* Zinc 900 #18181b */
+    --color-paper: 255 255 255;   /* White */
+    --color-surface: 244 244 245; /* Zinc 100 #f4f4f5 */
+    --color-accent: 16 185 129;   /* Emerald 500 #10b981 */
+    --color-shadow: 24 24 27;     /* Zinc 900 #18181b */
+    --color-warning: 239 68 68;   /* Red 500 #ef4444 */
+    --color-dot: 228 228 231;     /* Zinc 200 #e4e4e7 */
+  }
+  
+  .dark {
+    --color-ink: 244 244 245;     /* Zinc 100 */
+    --color-paper: 24 24 27;      /* Zinc 900 */
+    --color-surface: 9 9 11;      /* Zinc 950 #09090b */
+    --color-accent: 52 211 153;   /* Emerald 400 #34d399 */
+    --color-shadow: 0 0 0;        /* Black */
+    --color-warning: 248 113 113; /* Red 400 #f87171 */
+    --color-dot: 39 39 42;        /* Zinc 800 */
+  }
+</style>
+```
+
+### Tailwind CDN Configuration
+
+For CDN-based setups (current MetaCogna.ai Landing approach):
+
+```html
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          ink: 'rgb(var(--color-ink) / <alpha-value>)',
+          paper: 'rgb(var(--color-paper) / <alpha-value>)',
+          accent: 'rgb(var(--color-accent) / <alpha-value>)',
+          surface: 'rgb(var(--color-surface) / <alpha-value>)',
+          warning: 'rgb(var(--color-warning) / <alpha-value>)',
+        },
+        fontFamily: {
+          serif: ['"Playfair Display"', 'serif'],
+          sans: ['Inter', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+        boxShadow: {
+          'hard': '4px 4px 0px 0px rgb(var(--color-shadow))',
+          'hard-sm': '2px 2px 0px 0px rgb(var(--color-shadow))',
+          'hard-lg': '6px 6px 0px 0px rgb(var(--color-shadow))',
+          'hard-hover': '6px 6px 0px 0px rgb(var(--color-shadow))',
+        },
+        borderRadius: {
+          'sm': '2px',
+          'DEFAULT': '2px',
+          'md': '2px',
+          'lg': '2px',
+          'full': '9999px', // Keep for circles
+        },
+      }
+    }
+  }
+</script>
+```
+
+## Standard Tailwind Config File Approach
+
+For projects using standard Tailwind configuration files:
+
+### `tailwind.config.js`
+
+```javascript
+/** @type {import('tailwindcss').Config} */
+export default {
+  darkMode: 'class',
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        ink: {
+          DEFAULT: 'rgb(var(--color-ink) / <alpha-value>)',
+        },
+        paper: {
+          DEFAULT: 'rgb(var(--color-paper) / <alpha-value>)',
+        },
+        accent: {
+          DEFAULT: 'rgb(var(--color-accent) / <alpha-value>)',
+          hover: 'rgb(var(--color-accent-hover) / <alpha-value>)',
+          light: 'rgb(var(--color-accent-light) / <alpha-value>)',
+        },
+        surface: {
+          DEFAULT: 'rgb(var(--color-surface) / <alpha-value>)',
+        },
+        warning: {
+          DEFAULT: 'rgb(var(--color-warning) / <alpha-value>)',
+        },
+      },
+      fontFamily: {
+        serif: ['"Playfair Display"', 'serif'],
+        sans: ['Inter', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
+      },
+      boxShadow: {
+        'hard': '4px 4px 0px 0px rgb(var(--color-shadow))',
+        'hard-sm': '2px 2px 0px 0px rgb(var(--color-shadow))',
+        'hard-lg': '6px 6px 0px 0px rgb(var(--color-shadow))',
+        'hard-hover': '6px 6px 0px 0px rgb(var(--color-shadow))',
+      },
+      borderRadius: {
+        'sm': '2px',
+        'DEFAULT': '2px',
+        'md': '2px',
+        'lg': '2px',
+        'full': '9999px',
+      },
+    },
+  },
+  plugins: [],
+}
+```
+
+### CSS File (e.g., `src/index.css` or `styles.css`)
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-ink: 24 24 27;
+  --color-paper: 255 255 255;
+  --color-surface: 244 244 245;
+  --color-accent: 16 185 129;
+  --color-accent-hover: 5 150 105;
+  --color-accent-light: 209 250 229;
+  --color-shadow: 24 24 27;
+  --color-warning: 239 68 68;
+  --color-dot: 228 228 231;
+}
+
+.dark {
+  --color-ink: 244 244 245;
+  --color-paper: 24 24 27;
+  --color-surface: 9 9 11;
+  --color-accent: 52 211 153;
+  --color-accent-hover: 34 197 94;
+  --color-shadow: 0 0 0;
+  --color-warning: 248 113 113;
+  --color-dot: 39 39 42;
+}
+
+body {
+  background-color: rgb(var(--color-surface));
+  color: rgb(var(--color-ink));
+}
+```
+
+## Color System
+
+### Paper UI Color Tokens
+
+| Token | Light Mode | Dark Mode | Usage |
+|-------|-----------|-----------|-------|
+| **Ink** | `#18181b` (Zinc 900) | `#f4f4f5` (Zinc 100) | Primary text, borders, shadows |
+| **Paper** | `#ffffff` (White) | `#18181b` (Zinc 900) | Cards, modals, backgrounds |
+| **Surface** | `#f4f4f5` (Zinc 100) | `#09090b` (Zinc 950) | Background/desk surface |
+| **Accent** | `#10b981` (Emerald 500) | `#34d399` (Emerald 400) | Success, highlights, links |
+| **Warning** | `#ef4444` (Red 500) | `#f87171` (Red 400) | Errors, delete actions |
+
+### Additional Accent Variants
+
+```css
+:root {
+  --color-accent-hover: 5 150 105;    /* Emerald 600 */
+  --color-accent-light: 209 250 229;  /* Emerald 100 */
+}
+
+.dark {
+  --color-accent-hover: 34 197 94;    /* Emerald 500 */
+}
+```
+
+## Typography
+
+### Font Families
+
+Paper UI uses three distinct typefaces:
+
+```javascript
+fontFamily: {
+  serif: ['"Playfair Display"', 'serif'],  // Authority (headings)
+  sans: ['Inter', 'sans-serif'],            // Utility (body)
+  mono: ['"JetBrains Mono"', 'monospace'],  // Machine (code, metadata)
+}
+```
+
+### Font Loading
+
+Include in HTML `<head>`:
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+```
+
+## Shadows
+
+### Hard Shadows
+
+Paper UI uses hard, non-blurred shadows to create physical depth:
+
+- **`shadow-hard`**: `4px 4px 0px 0px rgb(var(--color-shadow))` - Default card shadow
+- **`shadow-hard-sm`**: `2px 2px 0px 0px rgb(var(--color-shadow))` - Small elements
+- **`shadow-hard-lg`**: `6px 6px 0px 0px rgb(var(--color-shadow))` - Hover states
+- **`shadow-hard-hover`**: `6px 6px 0px 0px rgb(var(--color-shadow))` - Interactive hover
+
+### Usage
+
+```jsx
+<div className="shadow-hard">Card with hard shadow</div>
+<div className="hover:shadow-hard-hover">Hover to increase shadow</div>
+```
+
+## Border Radius
+
+Paper UI uses minimal border radius (max 2px) for "hard edges":
+
+```javascript
+borderRadius: {
+  'sm': '2px',
+  'DEFAULT': '2px',
+  'md': '2px',
+  'lg': '2px',
+  'full': '9999px', // Only for circular elements
+}
+```
+
+## Animations
+
+### Custom Animations (Optional)
+
+```javascript
+animation: {
+  'slide-in': 'slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+  'fade-in': 'fadeIn 0.4s ease-out forwards',
+},
+keyframes: {
+  slideIn: {
+    '0%': { transform: 'translateX(-100%)' },
+    '100%': { transform: 'translateX(0)' },
+  },
+  fadeIn: {
+    '0%': { opacity: '0', transform: 'translateY(10px)' },
+    '100%': { opacity: '1', transform: 'translateY(0)' },
+  }
+}
+```
+
+## Dark Mode Setup
+
+### Toggle Implementation
+
+```typescript
+// React example
+const [isDark, setIsDark] = useState(() => {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  return false;
+});
+
+useEffect(() => {
+  if (isDark) {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
+  }
+}, [isDark]);
+```
+
+### CSS Background Pattern
+
+Optional dot pattern background:
+
+```css
+body {
+  background-image: radial-gradient(rgb(var(--color-dot)) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+```
+
+## Migration Guide
+
+### From Direct Color Values
+
+**Before:**
+```jsx
+<div className="bg-white border-2 border-zinc-900">
+```
+
+**After:**
+```jsx
+<div className="bg-paper border-2 border-ink">
+```
+
+### From Standard Shadows
+
+**Before:**
+```jsx
+<div className="shadow-lg">
+```
+
+**After:**
+```jsx
+<div className="shadow-hard">
+```
+
+### Adding Dark Mode
+
+1. Add CSS custom properties for dark mode
+2. Configure `darkMode: 'class'` in Tailwind config
+3. Use semantic color tokens instead of direct colors
+4. Test all components in both light and dark modes
+
+## Current Application Status
+
+### MetaCogna RAG
+- **Status**: Uses CDN Tailwind with inline config
+- **Dark Mode**: Not implemented
+- **Migration**: Needs CSS custom properties approach
+
+### MetaCogna.ai Landing
+- **Status**: Uses CDN Tailwind with CSS custom properties ✅
+- **Dark Mode**: Fully implemented ✅
+- **Migration**: Already follows recommended approach
+
+### Parti Architecture
+- **Status**: Uses CDN Tailwind with basic config
+- **Dark Mode**: Unknown
+- **Migration**: Needs CSS custom properties and dark mode
+
+## Best Practices
+
+1. **Always use semantic tokens**: `bg-paper`, `text-ink`, `border-ink`
+2. **Never use direct colors**: Avoid `bg-white`, `text-zinc-900`
+3. **Test dark mode**: Ensure all components work in both themes
+4. **Use CSS custom properties**: Best approach for theme switching
+5. **Consistent shadows**: Always use `shadow-hard` variants
+6. **Minimal border radius**: Max 2px except for circles
+
+## Related Documentation
+
+- [Design System](/design/system) - Paper UI design principles
+- [Component Guide](/design/components) - Component usage
+- [Baseline Components](/design/baseline-components) - Standardized components
+

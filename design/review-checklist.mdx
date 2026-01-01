@@ -1,0 +1,229 @@
+---
+title: "Design Review Checklist"
+description: "Comprehensive checklist for reviewing documentation pages"
+---
+
+Use this checklist to ensure consistency, quality, and alignment with the Paper UI design system across all documentation pages.
+
+## Page Structure Review
+
+### Frontmatter
+
+- [ ] **Title**: Clear, descriptive, matches page purpose
+- [ ] **Description**: Concise summary (50-150 chars) for SEO and preview cards
+- [ ] **Icon** (optional): Appropriate icon selected if using icon in navigation
+
+### Content Hierarchy
+
+- [ ] **H1**: Single H1 at top of page (handled by title)
+- [ ] **H2 Sections**: Logical grouping with descriptive headings
+- [ ] **H3 Subsections**: Properly nested under H2 sections
+- [ ] **Content Flow**: Logical progression from overview to details
+- [ ] **Related Links**: "Related Documentation" section at bottom
+
+## Component Usage
+
+### Cards
+
+- [ ] **CardGroup**: Used for feature lists (typically 2-column)
+- [ ] **Individual Cards**: Used for single feature highlights
+- [ ] **Card Icons**: Appropriate icons selected (Lucide icon names)
+- [ ] **Card Content**: Concise, scannable descriptions
+- [ ] **Card Links**: href attributes point to correct pages
+
+### Callouts
+
+- [ ] **Note**: Used for helpful supplementary information
+- [ ] **Warning**: Used for important cautions and breaking changes
+- [ ] **Info**: Used for neutral contextual information
+- [ ] **Tip**: Used for best practices and expert advice
+- [ ] **Appropriate Usage**: Callout type matches content urgency/type
+
+### Code Blocks
+
+- [ ] **Language Tags**: All code blocks have language specified
+- [ ] **Syntax Highlighting**: Appropriate for language
+- [ ] **Completeness**: Code examples are complete and runnable
+- [ ] **Context**: Code examples include necessary imports/context
+- [ ] **CodeGroup**: Used when showing multiple language variants
+
+### API Documentation
+
+- [ ] **ParamField**: Used for API parameter documentation
+- [ ] **Request/Response Examples**: Clear, realistic examples
+- [ ] **Error Responses**: Documented with status codes
+- [ ] **Authentication**: Clearly explained when required
+
+## Typography Review
+
+### Headings
+
+- [ ] **H2 Usage**: Section headings, not styling
+- [ ] **H3 Usage**: Subsections, properly nested
+- [ ] **Heading Clarity**: Descriptive and keyword-rich
+- [ ] **Heading Consistency**: Similar pages use similar heading structures
+
+### Body Text
+
+- [ ] **Paragraph Length**: Concise, scannable (3-5 sentences max per paragraph)
+- [ ] **List Usage**: Bulleted/numbered lists for multiple items
+- [ ] **Inline Code**: Backticks used for technical terms, filenames, commands
+- [ ] **Bold/Italic**: Used sparingly for emphasis
+
+### Code Formatting
+
+- [ ] **Inline Code**: Short code snippets, commands, variable names
+- [ ] **Code Blocks**: Multi-line code, complete examples
+- [ ] **Language Tags**: Appropriate and correct
+- [ ] **Comments**: Code examples include helpful comments when needed
+
+## Visual Consistency
+
+### Mermaid Diagrams
+
+- [ ] **Syntax**: Valid Mermaid syntax
+- [ ] **Node Names**: No spaces, use camelCase/PascalCase
+- [ ] **Labels**: Clear, descriptive node labels
+- [ ] **Complexity**: Diagrams are not overly complex
+- [ ] **Purpose**: Diagrams clarify concepts that text alone cannot
+
+### Tables
+
+- [ ] **Headers**: Clear, descriptive column headers
+- [ ] **Alignment**: Consistent alignment (left for text, right for numbers)
+- [ ] **Formatting**: Proper markdown table syntax
+- [ ] **Width**: Tables fit within page width
+- [ ] **Usage**: Tables used for structured data comparison
+
+### Images
+
+- [ ] **Alt Text**: Descriptive alt text provided (if using images)
+- [ ] **Relevance**: Images support content understanding
+- [ ] **Format**: Appropriate format (SVG for diagrams, PNG/JPG for photos)
+- [ ] **Sizing**: Images are appropriately sized
+
+## Navigation Review
+
+### Cross-References
+
+- [ ] **Internal Links**: Links use relative paths (`/page-name`)
+- [ ] **Link Text**: Descriptive, not "click here"
+- [ ] **Link Validity**: All links point to existing pages
+- [ ] **Related Docs**: "Related Documentation" section included
+- [ ] **Anchor Links**: Section anchors work correctly
+
+### Breadcrumbs
+
+- [ ] **Hierarchy**: Page fits logically in navigation structure
+- [ ] **Group Assignment**: Page is in appropriate group
+- [ ] **Ordering**: Page order makes logical sense within group
+
+## Content Quality
+
+### Clarity
+
+- [ ] **Purpose**: Page purpose is clear within first paragraph
+- [ ] **Audience**: Target audience is clear
+- [ ] **Prerequisites**: Prerequisites stated when needed
+- [ ] **Completeness**: All major concepts covered
+
+### Examples
+
+- [ ] **Code Examples**: Complete, runnable examples provided
+- [ ] **Real Data**: Examples use realistic data, not placeholders
+- [ ] **Multiple Examples**: Complex concepts have multiple examples
+- [ ] **Context**: Examples include necessary setup/context
+
+### Accuracy
+
+- [ ] **Technical Accuracy**: Information is correct
+- [ ] **Up-to-Date**: Information reflects current state
+- [ ] **Consistency**: Terminology consistent with other pages
+- [ ] **Version Alignment**: Code examples match current versions
+
+## Accessibility
+
+### Semantic HTML
+
+- [ ] **Headings**: Proper heading hierarchy (H1 → H2 → H3)
+- [ ] **Lists**: Proper list formatting (ul/ol)
+- [ ] **Code**: Code blocks properly formatted
+- [ ] **Links**: Links have descriptive text
+
+### Color Contrast
+
+- [ ] **Text Readability**: Text has sufficient contrast (handled by Mintlify theme)
+- [ ] **Code Blocks**: Code is readable in both light/dark modes
+- [ ] **Diagrams**: Diagram colors have sufficient contrast
+
+### Alternative Text
+
+- [ ] **Images**: Alt text provided for all images
+- [ ] **Diagrams**: Complex diagrams have text descriptions
+
+## Paper UI Alignment
+
+### Design Philosophy
+
+- [ ] **Visible Construction**: Technical details visible, not hidden
+- [ ] **High Contrast**: Content uses clear visual hierarchy
+- [ ] **Hard Edges**: Metaphorically - clear boundaries between sections
+- [ ] **Typography Hierarchy**: Clear separation of narrative vs. technical content
+
+### Component Mapping
+
+- [ ] **Cards**: Used for feature highlights (aligns with PaperCard concept)
+- [ ] **Callouts**: Used for important information (visible construction)
+- [ ] **Code Blocks**: Technical content clearly distinguished
+- [ ] **Tables**: Structured data presented clearly
+
+## Scoring Rubric
+
+Rate each category (1-5):
+
+- **5 - Excellent**: Exceeds standards, exemplary implementation
+- **4 - Good**: Meets standards, minor improvements possible
+- **3 - Acceptable**: Meets basic standards, some areas need work
+- **2 - Needs Improvement**: Multiple issues, significant revision needed
+- **1 - Poor**: Major issues, requires substantial revision
+
+### Categories
+
+- Page Structure: ___/5
+- Component Usage: ___/5
+- Typography: ___/5
+- Visual Consistency: ___/5
+- Navigation: ___/5
+- Content Quality: ___/5
+- Accessibility: ___/5
+- Paper UI Alignment: ___/5
+
+**Total Score: ___/40**
+
+## Improvement Suggestions Template
+
+For each item marked as needing improvement:
+
+1. **Issue**: Brief description
+2. **Location**: Section/page reference
+3. **Severity**: High/Medium/Low
+4. **Recommendation**: Specific improvement suggestion
+5. **Example**: Before/after example (if applicable)
+
+## Quick Review Template
+
+For rapid reviews, focus on:
+
+1. **Structure**: Does page follow standard structure?
+2. **Components**: Are components used appropriately?
+3. **Links**: Do all links work and point to correct pages?
+4. **Examples**: Are code examples complete and accurate?
+5. **Related Docs**: Is "Related Documentation" section included?
+
+## Related Documentation
+
+- [Design System](/design/system) - Paper UI design principles
+- [Design Guide](/design/guide) - Mintlify design guidelines
+- [Page Templates](/design/templates) - Standard page structures
+- [Component Guide](/design/components) - Component usage details
+

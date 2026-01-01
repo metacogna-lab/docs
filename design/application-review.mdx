@@ -1,0 +1,188 @@
+---
+title: "Application Design Review"
+description: "Comprehensive review of design system implementations across MetaCogna Suite applications"
+---
+
+This document reviews the design system implementations across all MetaCogna Suite applications, analyzing consistency, alignment with Paper UI principles, and areas for improvement.
+
+## Executive Summary
+
+**Review Date**: 2024  
+**Applications Reviewed**: 3 frontend applications
+
+- MetaCogna RAG
+- MetaCogna.ai Landing  
+- Parti Architecture
+
+**Overall Assessment**: Good foundation with Paper UI principles, but significant inconsistencies in implementation across applications.
+
+## Application Overview
+
+### MetaCogna RAG
+
+- **Location**: `metacogna-rag/components/PaperComponents.tsx`
+- **Components**: Basic set (Card, Button, Input, Badge, MarkdownText)
+- **Implementation Style**: Simple, functional
+- **Framework**: React + Tailwind CSS
+
+### MetaCogna.ai Landing
+
+- **Location**: `metacogna.ai-landing/components/PaperComponents.tsx`
+- **Components**: Extended set (Card, Button, Input, TextArea, Select, Badge, Modal)
+- **Implementation Style**: More polished, includes Framer Motion animations
+- **Framework**: React + Tailwind CSS + Framer Motion
+
+### Parti Architecture
+
+- **Location**: `parit-architecture/PaperComponents.tsx`
+- **Components**: Most extensive set (30+ components including specialized components)
+- **Implementation Style**: Comprehensive, production-ready
+- **Framework**: React + Tailwind CSS + Framer Motion
+
+## Component Implementation Analysis
+
+### PaperCard
+
+<CardGroup cols={2}>
+  <Card title="MetaCogna RAG" icon="file-code">
+    Simple implementation with basic functionality. No animations or dark mode support.
+  </Card>
+  <Card title="MetaCogna.ai Landing" icon="sparkles">
+    Enhanced with Framer Motion. Includes animations and better TypeScript support.
+  </Card>
+</CardGroup>
+
+#### MetaCogna RAG
+
+Simple implementation following Paper UI principles:
+
+```typescript
+<div className={`bg-paper border-2 border-ink shadow-hard rounded-sm p-0 relative flex flex-col ${className}`}>
+  {title && (
+    <div className="border-b-2 border-ink px-6 py-4 flex justify-between items-center bg-surface">
+      <h3 className="font-serif font-bold text-lg tracking-tight text-ink">
+        {title}
+      </h3>
+    </div>
+  )}
+  <div className="p-6 flex-1">{children}</div>
+</div>
+```
+
+**Assessment**:
+- ✅ Follows Paper UI principles (hard shadows, borders)
+- ✅ Proper typography (serif for titles)
+- ✅ Clean structure
+- ❌ No animation support
+- ❌ Limited customization options
+
+#### MetaCogna.ai Landing
+
+Enhanced with Framer Motion:
+
+```typescript
+<motion.div 
+  className={`bg-paper border-2 border-ink shadow-hard flex flex-col ${className}`}
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4, ease: "easeOut" }}
+>
+  {/* ... */}
+</motion.div>
+```
+
+**Assessment**:
+- ✅ Follows Paper UI principles
+- ✅ Includes smooth animations
+- ✅ More flexible (noPadding prop)
+- ✅ Better TypeScript types (extends HTMLMotionProps)
+- ✅ Header action support
+
+#### Parti Architecture
+
+Most comprehensive implementation with active states and click handlers.
+
+**Assessment**:
+- ✅ Most feature-complete
+- ✅ Active state support
+- ✅ Click handler support
+- ✅ Action slot
+- ⚠️ More complex, may be over-engineered for simple use cases
+
+<Note>
+Recommend standardizing on MetaCogna.ai Landing approach as the baseline - good balance of features and simplicity.
+</Note>
+
+## Design Token Consistency
+
+### Color System
+
+All applications reference Paper UI colors but implementation varies:
+
+**MetaCogna RAG**:
+- Uses Tailwind classes: `bg-paper`, `bg-ink`, `border-ink`, `shadow-hard`
+- References: `bg-accent`, `text-warning`, `bg-surface`
+- **Issue**: These need to be defined in Tailwind config
+
+**MetaCogna.ai Landing**:
+- Uses same Tailwind classes
+- Better dark mode support with `dark:` variants
+- **Issue**: May not have complete Tailwind config documented
+
+**Parti Architecture**:
+- Most comprehensive implementation
+- Likely has full Tailwind config
+- **Issue**: Need to verify config exists
+
+### Typography
+
+**All applications use**:
+- Serif font (Playfair Display) for headings/titles ✅
+- Sans-serif (Inter) for body text ✅
+- Monospace (JetBrains Mono) for technical content ✅
+
+**Inconsistencies**:
+- Input font: RAG uses mono (correct), Landing uses sans (incorrect)
+- Badge font size: RAG uses 10px (too small), Landing uses 12px (better)
+
+## Recommendations
+
+### High Priority
+
+1. **Standardize Core Components**
+   - Create baseline implementation for Card, Button, Input, Badge
+   - Use MetaCogna.ai Landing as reference (good balance)
+   - Fix inconsistencies (input font, badge size, button active state)
+
+2. **Tailwind Configuration**
+   - Document required Tailwind config for Paper UI colors
+   - Ensure all apps have consistent config
+   - Define custom utilities: `shadow-hard`, `bg-paper`, `bg-ink`, etc.
+
+3. **Dark Mode Standardization**
+   - Implement consistent dark mode across all apps
+   - Use MetaCogna.ai Landing approach as baseline
+   - Document dark mode color mappings
+
+### Medium Priority
+
+4. **Component Library**
+   - Consider shared component package
+   - Extract core components to shared location
+   - Keep app-specific components in app codebases
+
+5. **Documentation**
+   - Create component API documentation
+   - Document usage patterns
+   - Provide examples for each component
+
+<Warning>
+The foundation is solid, but standardization will improve maintainability and user experience consistency across the MetaCogna Suite.
+</Warning>
+
+## Related Documentation
+
+- [Design System](/design/system) - Paper UI design principles
+- [Tailwind Configuration](/design/tailwind-config) - Complete setup guide
+- [Baseline Components](/design/baseline-components) - Standardized components
+- [Project Reviews](/design/reviews/metacogna-rag-design) - Individual project reviews

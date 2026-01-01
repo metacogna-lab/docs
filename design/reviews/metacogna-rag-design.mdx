@@ -1,0 +1,346 @@
+---
+title: "MetaCogna RAG Design Review"
+description: "Detailed design review and generalities for the MetaCogna RAG application"
+---
+
+This document provides a comprehensive design review of the MetaCogna RAG application, documenting design patterns, component usage, and design generalities.
+
+## Project Overview
+
+MetaCogna RAG is a Retrieval-Augmented Generation system built on Cloudflare Workers with a React frontend. It provides document management, vector search, knowledge graph extraction, and RAG-powered chat capabilities.
+
+### Purpose
+
+- Document ingestion and storage (R2, D1, Vectorize)
+- Semantic search and retrieval
+- Knowledge graph visualization
+- RAG-powered question answering
+- Multi-agent simulation interface
+
+## Design Philosophy
+
+MetaCogna RAG follows the Paper UI design system with a focus on:
+
+1. **Functional Clarity**: Interface prioritizes functionality over decoration
+2. **Visible Construction**: Technical details (IDs, status, metadata) are visible
+3. **Hard Edges**: Minimal border radius, hard shadows for physical depth
+4. **High Contrast**: Clear visual hierarchy with Ink/Paper polarity
+
+## Color System Implementation
+
+### Current Implementation
+
+MetaCogna RAG uses Tailwind CDN with inline configuration:
+
+```javascript
+colors: {
+  paper: '#ffffff',
+  ink: '#18181b',        // Zinc 950
+  accent: '#10b981',     // Emerald 500
+  'accent-hover': '#059669',  // Emerald 600
+  'accent-light': '#d1fae5',  // Emerald 100
+  surface: '#f4f4f5',    // Zinc 100
+  warning: '#ef4444',    // Red 500
+}
+```
+
+### Issues
+
+- **No Dark Mode**: Dark mode is not implemented
+- **Direct Color Values**: Uses hex values instead of CSS custom properties
+- **Inconsistent Usage**: Some components may use direct Tailwind colors
+
+<Warning>
+Migration to CSS custom properties is recommended for future dark mode support.
+</Warning>
+
+## Typography
+
+### Font Families
+
+- **Serif** (Playfair Display): Headings, card titles
+- **Sans-Serif** (Inter): Body text, button labels
+- **Monospace** (JetBrains Mono): Technical inputs, badges, metadata
+
+### Typography Patterns
+
+**Headings**:
+- H1/H2: Serif font, bold, tight tracking
+- Card titles: Serif, bold, uppercase, tracking-wide
+
+**Body Text**:
+- Default: Sans-serif, standard weight, generous line-height
+- Code/metadata: Monospace, uppercase often
+
+**Inputs**:
+- Font: Monospace (correct per Paper UI)
+- Labels: Monospace, uppercase, bold, small size
+
+## Component Inventory
+
+### Core Components
+
+**PaperCard**
+- Basic implementation without animations
+- Supports title and action props
+- Hard shadows and borders
+
+**PaperButton**
+- Variants: primary, secondary, ghost, danger
+- Sizes: sm, md, lg
+- Active state with translate animation
+
+**PaperInput**
+- Label and error support
+- Monospace font (correct)
+- Focus shadow instead of ring
+
+**PaperBadge**
+- Colors: blue, green, red, ink
+- Monospace, uppercase
+- Size: 10px (too small - should be 12px)
+
+**MarkdownText**
+- Custom component for rendering markdown
+- Handles bold, inline code, code blocks
+
+### Application Components
+
+- **Layout**: Navigation sidebar with view switching
+- **GlobalAIModal**: Quick AI assistant (Cmd/Ctrl+I)
+- **SupervisorWidget**: Real-time supervisor advice
+- **ErrorBoundary**: React error boundary
+- **GlobalToast**: Toast notifications
+- **GraphAnalysis**: Graph metrics and insights
+
+## Layout Patterns
+
+### View-Based Routing
+
+The application uses enum-based view routing:
+
+```typescript
+enum ViewState {
+  LANDING = 'LANDING',
+  UPLOAD = 'UPLOAD',
+  QUESTION = 'QUESTION',
+  GRAPH = 'GRAPH',
+  PROMPT = 'PROMPT',
+  SETTINGS = 'SETTINGS',
+  // ...
+}
+```
+
+### Main Layout Structure
+
+- **Sidebar Navigation**: Fixed left sidebar with view links
+- **Main Content Area**: View-specific content
+- **Global Components**: Toast, modals, AI assistant overlay
+
+### View Patterns
+
+**Landing Page**:
+- Hero section with system status
+- Quick action cards
+- Morning briefing (AI-generated summary)
+
+**Upload View**:
+- Tabbed interface (Upload, Documents, Statistics)
+- Drag-and-drop file upload
+- Document list with metadata
+- Progress tracking
+
+**Question View**:
+- Chat interface layout
+- Message history
+- Input area with send button
+- Streaming response display
+
+**Knowledge Graph View**:
+- Full-screen graph canvas
+- Sidebar with controls and filters
+- Node/edge information panels
+
+## Navigation Patterns
+
+### Sidebar Navigation
+
+- Icon + text labels
+- Active state indication
+- Grouped by functionality
+- User profile access at bottom
+
+### View Switching
+
+- Programmatic view switching via `setView()`
+- No URL-based routing (SPA with state management)
+- View state persists in component state
+
+## Form Patterns
+
+### Input Patterns
+
+- Label above input (monospace, uppercase)
+- Error messages below input
+- Hard shadows on focus
+- No ring/outline focus styles
+
+### Button Patterns
+
+- Primary actions: Primary button variant
+- Secondary actions: Secondary or ghost variant
+- Destructive actions: Danger variant
+- Form submission: Full-width primary buttons common
+
+### Form Layout
+
+- Vertical stacking (flex-col)
+- Generous spacing between fields
+- Grouped related fields visually
+- Submit buttons at bottom
+
+## Data Visualization Patterns
+
+### Knowledge Graph
+
+- D3.js force-directed graph
+- PaperCard containers for controls
+- Monospace labels for node IDs
+- Color-coded node types
+
+### Progress Indicators
+
+- Pipeline stages with color coding
+- Percentage display
+- Animated progress bars
+- Stage-specific icons
+
+### Statistics Display
+
+- Card-based metric displays
+- Large numbers with labels
+- Status badges
+- Trend indicators (if applicable)
+
+## Unique Design Features
+
+### Pipeline Visualization
+
+Four-stage ingestion pipeline with:
+- Color-coded stages (Blue, Purple, Indigo, Emerald)
+- Percentage progress (0-29%, 30-59%, 60-89%, 90-100%)
+- Animated diagonal stripes during processing
+
+### Morning Briefing
+
+AI-generated daily summary:
+- Zero-UI approach (text-only)
+- PaperCard container
+- Generated on-demand
+
+### Document Metadata Tooltips
+
+Hover interactions reveal:
+- Full metadata (author, category, tags)
+- Technical details (ID, status, chunk count)
+- Visible construction principle
+
+## Component Usage Patterns
+
+### Card Usage
+
+- Primary container for all major sections
+- Titles for section headers
+- Action buttons in headerAction slot
+- Nested cards for grouped content
+
+### Button Usage
+
+- Primary: Main actions (Upload, Submit, Save)
+- Secondary: Alternative actions
+- Ghost: Tertiary actions, less emphasis
+- Danger: Delete, destructive actions
+
+### Badge Usage
+
+- Status indicators (processing, indexed, error)
+- System status (ONLINE, OFFLINE)
+- Document status
+- Small, monospace, uppercase
+
+## Consistency Assessment
+
+### Strengths
+
+- ✅ Consistent use of Paper UI colors
+- ✅ Hard shadows throughout
+- ✅ Minimal border radius
+- ✅ Monospace for technical content
+- ✅ Clear visual hierarchy
+
+### Areas for Improvement
+
+- ❌ No dark mode support
+- ❌ Badge font size too small (10px → 12px)
+- ❌ No animations on cards (could enhance UX)
+- ❌ Input font should remain monospace (currently correct)
+- ❌ Missing some extended components (TextArea, Select, Modal)
+
+## Recommendations
+
+### High Priority
+
+1. **Add Dark Mode Support**
+   - Migrate to CSS custom properties
+   - Update Tailwind config
+   - Test all components in dark mode
+
+2. **Fix Badge Size**
+   - Change from `text-[10px]` to `text-xs` (12px)
+   - Improve readability
+
+3. **Add Missing Components**
+   - PaperTextArea for multi-line inputs
+   - PaperSelect for dropdowns
+   - PaperModal for dialogs
+
+### Medium Priority
+
+4. **Add Animations**
+   - Card fade-in animations
+   - Smooth transitions
+   - Enhanced interactivity
+
+5. **Standardize Component Props**
+   - Align with baseline components
+   - Add missing props (noPadding, etc.)
+
+### Low Priority
+
+6. **Enhanced Visual Feedback**
+   - Loading states
+   - Success animations
+   - Error states with icons
+
+## Design Generalities Summary
+
+**Overall Approach**: Functional, technical, visible construction
+
+**Key Characteristics**:
+- Technical aesthetic with visible metadata
+- Hard edges and shadows for depth
+- High contrast for clarity
+- Monospace for technical content
+- Card-based layout patterns
+
+**Strengths**: Clean, functional, consistent with Paper UI principles
+
+**Weaknesses**: No dark mode, limited animations, small badge text
+
+## Related Documentation
+
+- [Design System](/design/system) - Paper UI principles
+- [Application Review](/design/application-review) - Cross-application review
+- [Baseline Components](/design/baseline-components) - Standardized components
+- [Tailwind Configuration](/design/tailwind-config) - Setup guide
+
