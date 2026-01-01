@@ -1,0 +1,220 @@
+---
+title: "Frontend Components"
+description: "React components and UI library"
+---
+
+The MetaCogna.ai Landing site is built with a component-based architecture using React 19 and the Paper UI design system.
+
+## Main Components
+
+### HeroSection
+
+**File**: `components/HeroSection.tsx`
+
+The hero section serves as the landing page introduction:
+
+- **Brand identity**: ASCII art logo and tagline
+- **Value proposition**: Clear statement of mission
+- **Call-to-action**: Navigation buttons
+- **Visual elements**: Animated background effects
+
+### ProjectGallery
+
+**File**: `components/ProjectGallery.tsx`
+
+Showcase of active projects:
+
+- **Project cards**: Title, description, status, tags
+- **Visual types**: Network graphs, brain circuits, etc.
+- **Links**: GitHub repositories, web URLs
+- **Curator notes**: Contextual commentary
+
+**Projects featured:**
+- Compilar
+- Neural Shadow
+- Timeless Love
+- Parti Architecture
+
+### ProjectGrid
+
+**File**: `components/ProjectGrid.tsx`
+
+Interactive project grid with knowledge graph visualization:
+
+- **Project management**: Add, edit, delete projects
+- **Graph visualization**: Hierarchical knowledge graph
+- **Node system**: Core domains, high-frequency entities
+- **Graph levels**: 3-level hierarchy (Hub → Domains → Entities)
+
+### PortalDashboard
+
+**File**: `components/PortalDashboard.tsx`
+
+Embedded preview of the executive command center:
+
+- **Updates feed**: Real-time project updates
+- **Goals tracking**: Goal status and progress
+- **Tool links**: Quick access to Notion, Linear, GitHub
+- **Search**: Portal-wide search functionality
+- **SSO Integration**: Single sign-on for external tools
+- **Organization matrix**: Team member overview
+
+### LoginModal
+
+**File**: `components/LoginModal.tsx`
+
+Multi-stage login system:
+
+1. **Steganographic Upload**: Upload image with hidden message
+2. **Password Entry**: Traditional password authentication
+3. **GitHub OAuth**: Alternative GitHub authentication
+
+**Features:**
+- Steganographic image processing
+- Binary message decoding
+- GitHub OAuth integration
+- Multi-stage flow with animations
+
+### MethodologySection
+
+**File**: `components/MethodologySection.tsx`
+
+Explains MetaCogna's engagement methodology:
+
+- **Approach**: Story-driven narrative
+- **Process**: Step-by-step methodology
+- **Visual elements**: Diagrams and illustrations
+
+### ServicesBase
+
+**File**: `components/ServicesBase.tsx`
+
+Service offerings display:
+
+- **Executive Operations**: Strategic pivot logic, capital efficiency, human systems
+- **Solutions Design**: Graph-RAG systems, agent orchestration, design systems
+- **Service cards**: Detailed descriptions with tags
+
+### CyclicPipeline
+
+**File**: `components/CyclicPipeline.tsx`
+
+Animated pipeline visualization:
+
+- **Cyclic flow**: Continuous process representation
+- **Stage indicators**: Visual stage markers
+- **Animation**: Smooth transitions between stages
+
+### TangentEngine
+
+**File**: `components/TangentEngine.tsx`
+
+Interactive tangent exploration:
+
+- **Mode switching**: Business vs. Technical views
+- **Exploration**: Navigate related concepts
+- **Visualization**: Graph-based navigation
+
+### DecisionLog
+
+**File**: `components/DecisionLog.tsx`
+
+Decision tracking and logging:
+
+- **Decision entries**: Timestamp, context, outcome
+- **Filtering**: By date, type, status
+- **Export**: PDF generation support
+
+### ContactModal
+
+**File**: `components/ContactModal.tsx`
+
+Contact form and integration:
+
+- **Form fields**: Name, email, message
+- **HubSpot integration**: Lead capture
+- **Submission handling**: API integration
+
+### Footer
+
+**File**: `components/Footer.tsx`
+
+Site footer with links and information:
+
+- **Navigation links**: Key pages
+- **Social links**: External profiles
+- **Copyright**: Legal information
+
+## Paper Components
+
+The site uses the Paper UI component library:
+
+- `PaperCard` - Content containers
+- `PaperButton` - Interactive buttons
+- `PaperBadge` - Status indicators
+- `PaperModal` - Modal dialogs
+- `PaperInput` - Text inputs
+- `PaperTextArea` - Multi-line inputs
+- `PaperSelect` - Dropdown selects
+
+See [Design System](/metacogna-ai-landing/design/system) for Paper UI details.
+
+## Component Patterns
+
+### Composition
+
+Components use composition for flexibility:
+
+```typescript
+<PaperCard>
+  <PaperCard.Header>
+    <h2>Title</h2>
+  </PaperCard.Header>
+  <PaperCard.Body>
+    Content
+  </PaperCard.Body>
+</PaperCard>
+```
+
+### Props Interface
+
+All components use TypeScript interfaces:
+
+```typescript
+interface PortalDashboardProps {
+  user: string;
+  role: UserRole;
+  onLogout: () => void;
+}
+```
+
+### State Management
+
+Components use React hooks for local state:
+
+```typescript
+const [updates, setUpdates] = useState<PortalUpdate[]>([]);
+const [loading, setLoading] = useState(true);
+```
+
+### Animations
+
+Components use Framer Motion for animations:
+
+```typescript
+import { motion } from 'framer-motion';
+
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3 }}
+>
+  Content
+</motion.div>
+```
+
+## Related Documentation
+
+- [Frontend Services](/metacogna-ai-landing/frontend/services) - Service layer
+- [Design System](/metacogna-ai-landing/design/system) - Design principles
+

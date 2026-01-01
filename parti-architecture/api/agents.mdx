@@ -1,0 +1,201 @@
+---
+title: "Agent API"
+description: "Specialized agent workers API"
+---
+
+Parti Architecture uses 7 specialized agent workers, each responsible for a specific phase of software architecture generation.
+
+## Agent Workers
+
+### PRD Agent
+
+**Worker**: `parit-prd-agent`
+
+Generates Product Requirements Documents from product seeds.
+
+**Input**: Product seed description
+**Output**: Comprehensive PRD with user personas, functional requirements, roadmap
+
+**System Prompt Focus:**
+- Executive summary
+- User personas
+- Functional requirements
+- Non-functional requirements
+- MoSCoW roadmap (Must/Should/Could/Won't Have)
+
+### Data Agent
+
+**Worker**: `parit-data-agent`
+
+Creates data models and database schemas.
+
+**Input**: PRD and requirements
+**Output**: Entity-relationship models, database schemas, migration scripts
+
+**System Prompt Focus:**
+- Entity identification
+- Relationship modeling
+- Database schema design
+- Migration strategies
+
+### Design Agent
+
+**Worker**: `parit-design-agent`
+
+Designs UI/UX systems and design tokens.
+
+**Input**: PRD and data models
+**Output**: Design system, color tokens, typography, component specs
+
+**System Prompt Focus:**
+- Design tokens (colors, typography, spacing)
+- Component library structure
+- UI/UX patterns
+- Accessibility guidelines
+
+### Logic Agent
+
+**Worker**: `parit-logic-agent`
+
+Defines business logic and workflows.
+
+**Input**: PRD, data models, design system
+**Output**: Business rules, state machines, validation logic, workflows
+
+**System Prompt Focus:**
+- Business rules
+- State machines
+- Validation rules
+- Error handling
+- **Triggers HITL interrupt** after completion
+
+### API Agent
+
+**Worker**: `parit-api-agent`
+
+Designs REST/GraphQL API specifications.
+
+**Input**: PRD, data models, business logic
+**Output**: API endpoints, request/response schemas, OpenAPI specification
+
+**System Prompt Focus:**
+- RESTful API design
+- Resource modeling
+- Request/response schemas
+- Authentication/authorization
+- Rate limiting
+- Error handling
+
+### Frontend Agent
+
+**Worker**: `parit-frontend-agent`
+
+Architects React frontend systems.
+
+**Input**: PRD, design system, API specification
+**Output**: Component hierarchy, state management, routing, build configuration
+
+**System Prompt Focus:**
+- Component architecture
+- State management (Zustand/Redux)
+- Routing structure
+- Data fetching patterns
+- Performance optimization
+- Accessibility
+
+### Deployment Agent
+
+**Worker**: `parit-deployment-agent`
+
+Creates infrastructure and CI/CD pipelines.
+
+**Input**: API specification, frontend architecture, overall system
+**Output**: Infrastructure as Code, CI/CD pipelines, deployment configs
+
+**System Prompt Focus:**
+- Cloudflare Workers/Pages configuration
+- CI/CD pipelines (GitHub Actions)
+- Database migrations
+- Monitoring and observability
+- Security configuration
+- Disaster recovery
+
+## Agent Communication
+
+Agents communicate via Cloudflare service bindings:
+
+```typescript
+// Supervisor calls agent
+const response = await env.PRD_AGENT.fetch(request);
+
+// Agent receives request
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    // Process request and generate artifact
+    return new Response(JSON.stringify(artifact));
+  }
+};
+```
+
+## Agent Request Format
+
+All agents receive requests with this structure:
+
+```json
+{
+  "system_state": {
+    "current_phase": "prd",
+    "project_id": "project-uuid"
+  },
+  "context": "Previous artifacts and context...",
+  "user_input": "Product description..."
+}
+```
+
+## Agent Response Format
+
+All agents return responses in this format:
+
+```json
+{
+  "system_state": {
+    "current_phase": "prd",
+    "status": "complete",
+    "interrupt_signal": false
+  },
+  "artifact": {
+    "type": "markdown",
+    "content": "# Product Requirements..."
+  },
+  "trace": {
+    "agent": "prd-agent",
+    "timestamp": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+## System Prompts
+
+Each agent has a specialized system prompt that defines:
+
+- **Role**: Agent's expertise and responsibilities
+- **Instructions**: Step-by-step process
+- **Output Structure**: Required format and sections
+- **Constraints**: Rules and limitations
+
+System prompts are defined in `workers/{agent}/src/systemPrompts.ts`.
+
+## Parallel Execution
+
+Some phases support parallel execution:
+
+- **PRD, Data, Logic** - Can execute in parallel (fan-out/fan-in pattern)
+- **Design, API, Frontend** - Sequential execution
+- **Deployment** - Final phase, sequential
+
+## Related Documentation
+
+- [Supervisor API](/parti-architecture/api/supervisor) - Orchestration API
+- [Backend Agents](/parti-architecture/backend/agents) - Implementation details
+- [Design Architecture](/parti-architecture/design/architecture) - System architecture
+

@@ -1,0 +1,119 @@
+---
+title: "Design System"
+description: "Digital Paper design system specification"
+---
+
+MetaCogna.ai Landing uses the Digital Paper design system, a functional brutalism approach that emphasizes hard edges, high contrast, and visible construction.
+
+## Core Philosophy
+
+The design system operates on the metaphor of **Digital Paper**. Elements are physical sheets of paper layered on a surface, not floating in a void.
+
+### Key Principles
+
+1. **Hard Edges**: No `border-radius` greater than 2px
+2. **Hard Shadows**: No blurred drop-shadows; solid blocks of color (`box-shadow: 4px 4px 0px 0px color`)
+3. **High Contrast**: Strict polarity between Ink (dark) and Paper (light)
+4. **Visible Construction**: Metadata, IDs, and technical labels are visible UI elements
+
+## Color System
+
+### Semantic Colors (Ink & Paper)
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| **Ink** | `#18181b` (Zinc 950) | Primary text, borders, hard shadows, terminal backgrounds |
+| **Paper** | `#ffffff` (White) | Cards, modals, primary backgrounds |
+| **Surface** | `#f4f4f5` (Zinc 100) | Background/desk surface behind paper cards |
+| **Accent** | `#10b981` (Emerald 500) | Success states, "Go" buttons, highlights |
+| **Warning** | `#ef4444` (Red 500) | Errors, delete actions, critical alerts |
+
+### Dark Mode
+
+In dark mode, the polarity flips:
+- **Ink** becomes `#f4f4f5` (light)
+- **Paper** becomes `#18181b` (dark)
+
+## Typography
+
+Three distinct typefaces separate **Narrative**, **Utility**, and **Data**:
+
+### The Voice of Authority (Serif)
+
+- **Font**: `Playfair Display`
+- **Usage**: H1, H2, H3, Hero statements, philosophy sections
+- **Style**: Bold weights, tight tracking (`tracking-tight`)
+- **Vibe**: Classic, editorial, serious, slightly arrogant
+
+### The Voice of Utility (Sans-Serif)
+
+- **Font**: `Inter`
+- **Usage**: Body text, long-form reading, button labels
+- **Style**: Standard weights, generous line-height (`leading-relaxed`)
+- **Vibe**: Invisible, highly legible, modern
+
+### The Voice of the Machine (Monospace)
+
+- **Font**: `JetBrains Mono`
+- **Usage**: Metadata tags, IDs, terminal output, navigation links
+- **Style**: Uppercase often, smaller size (`text-xs`), wide tracking (`tracking-widest`)
+- **Vibe**: Raw data, code, truth, engineering
+
+## Component Patterns
+
+### PaperCard
+
+The fundamental building block:
+
+- **Border**: `2px solid var(--color-ink)`
+- **Shadow**: `4px 4px 0px 0px var(--color-ink)`
+- **Background**: `var(--color-paper)`
+- **Hover**: Translate Y `-1px`, shadow increases to `6px 6px`
+
+### PaperButton
+
+- **Primary**: Solid Ink background, Paper text. Inverts to Accent on hover
+- **Ghost**: Transparent background, Ink text. Gains shadow on hover
+- **Interaction**: Active state translates `2px 2px` down to "crush" shadow
+
+### BlueprintSchematic (SVG)
+
+- **Lines**: Thin `1.5px` strokes
+- **Colors**: Cyan/Blue (`#38bdf8`) on Dark Blue (`#0f172a`) background
+- **Motion**: Particles travel along `offset-path` SVG lines
+- **Logic**: Always connect Input → Process → Output
+
+### Terminal Overlay
+
+Used for high-density technical information:
+
+- **Background**: Black (`#000000`) or Ink (`#18181b`)
+- **Text**: Bright Green (`#22c55e`) or Accent
+- **Font**: Monospace
+- **Animation**: Typing effects, blinking cursors
+
+## Layout & Spacing
+
+- **Grid**: Fluid 12-column grid
+- **Spacing**: Generous padding inside cards (`p-6` or `p-8`), tight spacing between grouped elements (`gap-2`)
+- **Whitespace**: Used aggressively to separate Narrative sections from Technical sections
+
+## Iconography
+
+- **Set**: Lucide React
+- **Style**: `stroke-width={1.5}` or `2`
+- **Usage**: Icons rarely used alone; usually paired with Monospace label
+
+## Implementation
+
+Components are implemented using:
+
+- **Tailwind CSS** - Utility-first styling
+- **Framer Motion** - Animations
+- **TypeScript** - Type safety
+
+## Related Documentation
+
+- [Frontend Components](/metacogna-ai-landing/frontend/components) - Component usage
+- [MetaCogna RAG Design System](/metacogna-rag/design/system) - Related design system
+

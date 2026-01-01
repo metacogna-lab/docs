@@ -1,0 +1,196 @@
+---
+title: "Supervisor API"
+description: "Supervisor worker API for project management and orchestration"
+---
+
+The Supervisor worker orchestrates agent execution and manages project state, artifacts, and execution traces.
+
+## Base URL
+
+- **Local**: `http://localhost:8787`
+- **Production**: `https://parti-supervisor.your-subdomain.workers.dev`
+
+## Endpoints
+
+### Project Management
+
+#### GET /api/projects
+
+List all projects.
+
+<ParamField body="response">
+```json
+[
+  {
+    "id": "project-uuid",
+    "name": "Project Name",
+    "product_seed": "Product description...",
+    "current_phase": "prd",
+    "status": "active",
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  }
+]
+```
+</ParamField>
+
+#### GET /api/hydrate/:projectId
+
+Master hydration endpoint for project state.
+
+<ParamField body="response">
+```json
+{
+  "project": {
+    "id": "project-uuid",
+    "name": "Project Name",
+    "current_phase": "prd",
+    "status": "active"
+  },
+  "history": {
+    "logs": [...],
+    "artifacts": [...],
+    "checkpoints": [...]
+  }
+}
+```
+</ParamField>
+
+### Project Creation
+
+#### POST /api/projects
+
+Create a new project.
+
+<ParamField body="request">
+```json
+{
+  "name": "Project Name",
+  "product_seed": "Product description..."
+}
+```
+</ParamField>
+
+<ParamField body="response">
+```json
+{
+  "id": "project-uuid",
+  "name": "Project Name",
+  "product_seed": "Product description...",
+  "current_phase": "prd",
+  "status": "active",
+  "created_at": "2024-01-01T00:00:00.000Z"
+}
+```
+</ParamField>
+
+### Agent Execution
+
+#### POST /api/execute
+
+Execute agent workflow (streaming).
+
+**Headers:**
+- `Accept: text/event-stream` - For SSE streaming
+- `X-Project-ID: project-uuid` - Project identifier
+
+<ParamField body="request">
+```json
+{
+  "projectId": "project-uuid",
+  "phase": "prd"
+}
+```
+</ParamField>
+
+**Streaming Response (SSE):**
+```
+event: agent_start
+data: {"agent": "prd", "phase": "prd"}
+
+event: agent_progress
+data: {"agent": "prd", "progress": 50}
+
+event: agent_complete
+data: {"agent": "prd", "artifact": {...}}
+
+event: phase_complete
+data: {"phase": "prd", "status": "complete"}
+```
+
+### Artifact Management
+
+#### GET /api/artifacts/:projectId
+
+Get all artifacts for a project.
+
+<ParamField body="response">
+```json
+[
+  {
+    "id": "artifact-uuid",
+    "project_id": "project-uuid",
+    "phase": "prd",
+    "type": "markdown",
+    "content": "# Product Requirements...",
+    "created_at": "2024-01-01T00:00:00.000Z"
+  }
+]
+```
+</ParamField>
+
+### Execution Traces
+
+#### GET /api/traces/:projectId
+
+Get execution traces for a project.
+
+<ParamField body="response">
+```json
+[
+  {
+    "id": "trace-uuid",
+    "project_id": "project-uuid",
+    "phase": "prd",
+    "agent": "prd-agent",
+    "status": "complete",
+    "created_at": "2024-01-01T00:00:00.000Z"
+  }
+]
+```
+</ParamField>
+
+## Streaming API
+
+The supervisor supports Server-Sent Events (SSE) for real-time progress updates:
+
+```typescript
+const eventSource = new EventSource(
+  '/api/execute?projectId=project-uuid&phase=prd',
+  { headers: { 'X-Project-ID': 'project-uuid' } }
+);
+
+eventSource.addEventListener('agent_start', (e) => {
+  const data = JSON.parse(e.data);
+  console.log(`Agent started: ${data.agent}`);
+});
+
+eventSource.addEventListener('agent_complete', (e) => {
+  const data = JSON.parse(e.data);
+  console.log(`Agent completed: ${data.agent}`);
+});
+```
+
+## Human-in-the-Loop (HITL)
+
+The supervisor supports interrupt signals for human review:
+
+- **Interrupt Signal**: `system_state.interrupt_signal: true`
+- **Status**: `system_state.status: "interrupted"`
+- **Review Required**: Agent execution pauses for human approval
+
+## Related Documentation
+
+- [Agent API](/parti-architecture/api/agents) - Agent worker APIs
+- [Backend Supervisor](/parti-architecture/backend/supervisor) - Implementation details
+

@@ -1,0 +1,230 @@
+---
+title: "Frontend Views"
+description: "Main React views and user interfaces"
+---
+
+The MetaCogna RAG frontend is built with React 18 and organized into distinct views, each handling a specific aspect of the application.
+
+## View Structure
+
+The application uses a view-based routing system with the following main views:
+
+<CardGroup cols={2}>
+  <Card title="Landing Page" icon="home">
+    Entry point with hero section and morning briefing
+  </Card>
+  <Card title="Upload View" icon="upload">
+    Document upload, metadata management, and statistics
+  </Card>
+  <Card title="Question View" icon="message-circle">
+    RAG-powered question answering interface
+  </Card>
+  <Card title="Knowledge Graph View" icon="network">
+    Interactive graph visualization of entities and relationships
+  </Card>
+  <Card title="Prompt Lab" icon="sparkles">
+    Prompt engineering with template library
+  </Card>
+  <Card title="Settings View" icon="settings">
+    LLM configuration, API keys, and app settings
+  </Card>
+  <Card title="Agent Canvas" icon="workflow">
+    Multi-agent simulation and idea generation
+  </Card>
+  <Card title="My Profile" icon="user">
+    User profile, document filtering, and summaries
+  </Card>
+</CardGroup>
+
+## Landing Page View
+
+**File**: `views/LandingPageView.tsx`
+
+The landing page serves as the entry point and provides:
+
+- **Hero Section**: System status badge, title, and call-to-action buttons
+- **Morning Briefing**: AI-generated daily summary of documents and insights
+- **Quick Navigation**: Access to Upload, Settings, and other views
+
+### Key Features
+
+- Zero-UI morning briefing generated using LLM
+- Document count and status overview
+- System status indicators
+
+## Upload View
+
+**File**: `views/UploadView.tsx`
+
+The upload view handles document management with three main tabs:
+
+### Upload Tab
+
+- **Drag & Drop**: File upload with visual feedback
+- **File Browser**: Traditional file selection
+- **Progress Tracking**: 4-stage pipeline visualization
+  - Chunking (0-29%)
+  - Embedding (30-59%)
+  - Graph Extraction (60-89%)
+  - Finalizing (90-100%)
+
+### Metadata Tab
+
+- **Document Selection**: Choose document to edit metadata
+- **Metadata Editor**: Add/edit key-value pairs
+- **Metadata Display**: View all metadata for selected document
+
+### Stats Tab
+
+- **Document Statistics**: Total documents, indexed count, error count
+- **Chunk Statistics**: Total chunks across all documents
+- **Maintenance Operations**:
+  - Reindex All - Re-process all documents
+  - Purge Errors - Remove failed documents
+
+### Features
+
+- Bulk document selection and deletion
+- Filter by status (all, indexed, processing, error)
+- Search documents by title
+- Document list with status badges and metadata tooltips
+
+## Question View
+
+**File**: `views/QuestionView.tsx`
+
+The question view provides RAG-powered question answering:
+
+- **Query Input**: Text input for user questions
+- **Agent Type Selection**: Choose specialized agent (rag-chat, graph-analyst, etc.)
+- **Response Display**: Streaming response with source citations
+- **Chat History**: Previous questions and answers
+- **Source Display**: Retrieved document chunks with scores
+
+### Agent Types
+
+- `rag-chat` - General RAG assistant
+- `graph-analyst` - Knowledge graph analysis
+- `executive-summary` - Executive summaries
+- `technical-auditor` - Technical analysis
+- `future-planner` - Strategic planning
+
+## Knowledge Graph View
+
+**File**: `views/KnowledgeGraphView.tsx`
+
+Interactive visualization of the knowledge graph:
+
+- **Node Visualization**: Entities displayed as nodes
+- **Edge Visualization**: Relationships displayed as edges
+- **Node Types**: Different visual styles for different entity types
+- **Interaction**: Click nodes to view details
+- **Filtering**: Filter by document, entity type, or relationship type
+
+### Graph Analysis
+
+- Centrality metrics
+- Cluster identification
+- Connection strength visualization
+
+## Prompt Lab View
+
+**File**: `views/PromptGenView.tsx`
+
+Prompt engineering workspace:
+
+### Template Library
+
+Three production-ready templates:
+- **RAG Query**: Optimized for retrieval-augmented generation
+- **Code Review**: Comprehensive code analysis
+- **Goal Analysis**: Strategic goal breakdown
+
+### Features
+
+- **Variable Interpolation**: Insert `{{context}}`, `{{query}}`, `{{code}}`, etc.
+- **Cursor-Aware Insertion**: Variables inserted at cursor position
+- **Template Selector**: 3-column grid with icons and descriptions
+- **AI Optimization**: Generate optimized prompts using Gemini AI
+- **Save to Library**: Store custom prompts for reuse
+
+## Settings View
+
+**File**: `views/SettingsView.tsx`
+
+Application configuration:
+
+- **LLM Provider Selection**: OpenAI, Anthropic, Google, Ollama, Workers AI
+- **Model Selection**: Choose specific model (GPT-4o, Claude 3.5 Sonnet, etc.)
+- **API Key Management**: Secure localStorage with submit buttons
+- **Temperature Control**: Adjustable generation creativity (0.0-1.0)
+- **System Prompts**: Manage system prompt templates
+
+## Agent Canvas View
+
+**File**: `views/AgentCanvasView.tsx`
+
+Multi-agent simulation canvas:
+
+- **Agent Visualization**: Coordinator and Critic agents
+- **Idea Blocks**: Visual representation of ideas/concepts
+- **Beam Animations**: Visual connections between agents and ideas
+- **Turn Execution**: Step-by-step agent interactions
+- **Memory System**: Short-term and long-term memory tracking
+
+### Agent Goals
+
+- Synthesis and coordination
+- Critical analysis
+- Idea refinement
+- Knowledge graph building
+
+## My Profile View
+
+**File**: `views/MyProfileView.tsx`
+
+User profile and document management:
+
+- **Document Filtering**: Filter by metadata, keywords
+- **Word Cloud**: Visual representation of document content
+- **Summary Generation**: AI-generated profile summaries
+- **Recursive Concept View**: Hierarchical concept visualization
+- **Prompt Selection**: Choose active system prompt
+
+## View State Management
+
+Views use Zustand for state management with selective subscriptions:
+
+```typescript
+import { useStore } from '../store';
+
+// Selective subscription
+const documents = useStore((state) => state.documents);
+const config = useStore((state) => state.config);
+```
+
+## Navigation
+
+Views are managed through a view state enum:
+
+```typescript
+export enum ViewState {
+  LANDING = 'landing',
+  UPLOAD = 'upload',
+  QUESTION = 'question',
+  GRAPH = 'graph',
+  PROMPT_GEN = 'prompt-gen',
+  SETTINGS = 'settings',
+  AGENT_CANVAS = 'agent-canvas',
+  MY_PROFILE = 'my-profile',
+}
+```
+
+Navigation is handled by the main `App.tsx` component.
+
+## Related Documentation
+
+- [Frontend Components](/metacogna-rag/frontend/components) - Reusable React components
+- [Backend Worker](/metacogna-rag/backend/worker) - Worker API endpoints
+- [Design System](/metacogna-rag/design/system) - Paper UI design system
+

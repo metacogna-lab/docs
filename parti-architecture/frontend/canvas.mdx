@@ -1,0 +1,94 @@
+---
+title: "Agent Canvas"
+description: "Frontend interface for project visualization and agent interaction"
+---
+
+The Agent Canvas is the main frontend interface for Parti Architecture, providing visualization of project state, agent execution, and artifact generation.
+
+## Overview
+
+The canvas provides:
+
+- **Project Visualization**: Visual representation of project state and phases
+- **Agent Status**: Real-time agent execution status
+- **Artifact Display**: Generated artifacts and specifications
+- **Human-in-the-Loop**: Interrupt handling and approval workflow
+- **Project Management**: Create, view, and manage projects
+
+## Main Components
+
+### Project Canvas
+
+Visual canvas showing:
+
+- **Phase Nodes**: Visual representation of execution phases
+- **Agent Connections**: Flow between agents and phases
+- **Status Indicators**: Phase completion status
+- **Artifact Links**: Connections to generated artifacts
+
+### Agent Status Panel
+
+Real-time agent execution status:
+
+- **Active Agents**: Currently executing agents
+- **Progress Indicators**: Execution progress bars
+- **Completion Status**: Phase completion states
+- **Error Display**: Agent errors and failures
+
+### Artifact Viewer
+
+Display generated artifacts:
+
+- **Artifact List**: All artifacts by phase
+- **Content Preview**: Markdown/code preview
+- **Download Options**: Export artifacts
+- **Version History**: Artifact versions
+
+### Interrupt Modal
+
+Human-in-the-Loop approval interface:
+
+- **Review Artifacts**: Display artifacts requiring review
+- **Approve/Reject**: Approve to continue or request changes
+- **Comments**: Add review comments
+- **Resume Execution**: Continue after approval
+
+## State Management
+
+The frontend uses Zustand for state management:
+
+```typescript
+import { useStore } from './store';
+
+const projects = useStore((state) => state.projects);
+const currentProject = useStore((state) => state.currentProject);
+const artifacts = useStore((state) => state.artifacts);
+```
+
+## Real-Time Updates
+
+The canvas uses Server-Sent Events (SSE) for real-time updates:
+
+```typescript
+const eventSource = new EventSource('/api/execute?projectId=...');
+
+eventSource.addEventListener('agent_progress', (e) => {
+  const data = JSON.parse(e.data);
+  updateAgentStatus(data.agent, data.progress);
+});
+```
+
+## Project Workflow
+
+1. **Create Project** - Enter product seed description
+2. **Initialize** - Supervisor creates project and starts PRD phase
+3. **Agent Execution** - Agents execute sequentially/parallel
+4. **HITL Interrupts** - Human review at strategic points
+5. **Artifact Generation** - Artifacts generated and stored
+6. **Completion** - All phases complete, project ready
+
+## Related Documentation
+
+- [Backend Supervisor](/parti-architecture/backend/supervisor) - Supervisor API
+- [Design Architecture](/parti-architecture/design/architecture) - System design
+

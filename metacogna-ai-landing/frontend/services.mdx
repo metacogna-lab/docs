@@ -1,0 +1,149 @@
+---
+title: "Frontend Services"
+description: "Service layer for API integration and utilities"
+---
+
+The frontend uses a service-oriented architecture for API integration, authentication, and utility functions.
+
+## Services
+
+### portalService
+
+**File**: `services/portalService.ts`
+
+Portal dashboard API integration:
+
+#### Functions
+
+**fetchUpdates()**
+Fetches portal updates from the API.
+
+```typescript
+async function fetchUpdates(): Promise<PortalUpdate[]>
+```
+
+**fetchGoals()**
+Fetches project goals.
+
+```typescript
+async function fetchGoals(): Promise<PortalGoal[]>
+```
+
+**fetchToolLinks()**
+Fetches quick-access tool links.
+
+```typescript
+async function fetchToolLinks(): Promise<ToolLinkResponse>
+```
+
+**searchPortal()**
+Searches portal content.
+
+```typescript
+async function searchPortal(query: string): Promise<SearchResult[]>
+```
+
+**fetchStatus()**
+Fetches portal status.
+
+```typescript
+async function fetchStatus(): Promise<StatusResponse>
+```
+
+**fetchLinearTasks()**
+Fetches Linear tasks.
+
+```typescript
+async function fetchLinearTasks(): Promise<LinearTask[]>
+```
+
+**fetchNotionPages()**
+Fetches Notion pages.
+
+```typescript
+async function fetchNotionPages(): Promise<NotionPage[]>
+```
+
+**fetchOrgMatrix()**
+Fetches organization matrix.
+
+```typescript
+async function fetchOrgMatrix(): Promise<OrgMatrixRow[]>
+```
+
+**startSso()**
+Initiates SSO authentication.
+
+```typescript
+async function startSso(provider: string): Promise<void>
+```
+
+#### Mock Data
+
+The service includes fallback mock data when the API is unreachable (e.g., local development).
+
+### authService
+
+**File**: `services/authService.ts`
+
+Authentication service:
+
+- **Login handling**: Session management
+- **Token storage**: Secure token storage
+- **GitHub OAuth**: OAuth flow integration
+- **Steganographic auth**: Image-based authentication
+
+### pdfGenerator
+
+**File**: `services/pdfGenerator.ts`
+
+PDF generation service:
+
+- **Document generation**: Create PDFs from data
+- **Formatting**: Structured PDF layout
+- **Export**: Download functionality
+
+**Uses jsPDF library** for PDF generation.
+
+## API Integration
+
+### Base URL
+
+Portal API base URL configuration:
+
+```typescript
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
+  'https://portal-api.metacogna.ai';
+```
+
+### Error Handling
+
+Services include error handling with fallbacks:
+
+```typescript
+try {
+  const response = await fetch(`${API_BASE_URL}/api/portal/updates`);
+  if (!response.ok) throw new Error('Failed to fetch');
+  return await response.json();
+} catch (error) {
+  console.error('API error:', error);
+  // Return mock data as fallback
+  return MOCK_UPDATES;
+}
+```
+
+### Type Definitions
+
+Services use TypeScript types defined in `types.ts`:
+
+- `PortalUpdate` - Update entries
+- `PortalGoal` - Goal entries
+- `UserRole` - User role types
+- `SearchResult` - Search results
+- `StatusResponse` - Status information
+
+## Related Documentation
+
+- [Frontend Components](/metacogna-ai-landing/frontend/components) - Component usage
+- [API Workers](/metacogna-ai-landing/api/workers) - Backend API
+

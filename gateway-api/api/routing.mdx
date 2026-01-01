@@ -1,0 +1,236 @@
+---
+title: "Routing API"
+description: "Route configuration and request proxying"
+---
+
+The Gateway API routes requests to downstream services based on URL prefixes. Each route can be configured with authentication requirements and target service URLs.
+
+## Route Configuration
+
+Routes are defined with a prefix, environment variable key, and route type:
+
+```typescript
+const ROUTES = [
+  { prefix: '/build', envKey: 'BUILD_SERVICE_URL', route: ProjectRoute.BUILD },
+  { prefix: '/kv', envKey: 'KV_SERVICE_URL', route: ProjectRoute.KV },
+  { prefix: '/core', envKey: 'CORE_SERVICE_URL', route: ProjectRoute.CORE },
+];
+```
+
+## Route Types
+
+<CodeGroup>
+```typescript ProjectRoute Enum
+export enum ProjectRoute {
+  AUTH = 'AUTH',
+  KV = 'KV',
+  BUILD = 'BUILD',
+  CORE = 'CORE',
+}
+```
+</CodeGroup>
+
+## Routing Behavior
+
+### URL Rewriting
+
+The gateway strips the route prefix and forwards the remaining path to the target service:
+
+```
+Request:  GET /build/projects/123
+Prefix:   /build
+Stripped: /projects/123
+Forward:  {BUILD_SERVICE_URL}/projects/123
+```
+
+### Query Parameters
+
+Query parameters are preserved during URL rewriting:
+
+```
+Request:  GET /kv/data?filter=active&limit=10
+Forward:  {KV_SERVICE_URL}/data?filter=active&limit=10
+```
+
+### Headers
+
+The gateway modifies headers before forwarding:
+
+- **Removed**: `Authorization` (prevents token leakage to downstream services)
+- **Added**: `X-Gateway-Route` (indicates which route matched)
+
+```typescript
+headers.delete('Authorization');
+headers.set('X-Gateway-Route', match.route);
+```
+
+## Authentication Requirements
+
+### Required Authentication
+
+**`/build`** routes always require authentication:
+
+```typescript
+const shouldVerify = match.route === ProjectRoute.BUILD || 
+                     request.headers.has('Authorization');
+```
+
+If no `Authorization` header is present for `/build` routes, the gateway returns `401 MISSING_TOKEN`.
+
+### Optional Authentication
+
+**`/kv`** and **`/core`** routes verify tokens only if provided:
+
+- If `Authorization` header is present → verify token
+- If no header → forward request without verification
+
+### Token Route Matching
+
+Tokens must match the requested route (or be `CORE`/`AUTH` routes which have elevated privileges):
+
+```typescript
+if (claims.route !== route && 
+    claims.route !== ProjectRoute.CORE && 
+    claims.route !== ProjectRoute.AUTH) {
+  throw new Error('route_mismatch');
+}
+```
+
+## Routing Flow
+
+```mermaid
+flowchart TD
+    Start[Request Received] --> CheckAuth{Is /auth endpoint?}
+    CheckAuth -->|Yes| HandleAuth[Handle Authentication]
+    CheckAuth -->|No| MatchRoute{Match route prefix?}
+    
+    MatchRoute -->|/build| VerifyToken1[Verify Token Required]
+    MatchRoute -->|/kv| CheckHeader{Has Auth Header?}
+    MatchRoute -->|/core| CheckHeader2{Has Auth Header?}
+    MatchRoute -->|No Match| Error404[404 NOT_FOUND]
+    
+    CheckHeader -->|Yes| VerifyToken2[Verify Token]
+    CheckHeader -->|No| ProxyRequest[Proxy Request]
+    CheckHeader2 -->|Yes| VerifyToken3[Verify Token]
+    CheckHeader2 -->|No| ProxyRequest
+    
+    VerifyToken1 -->|Valid| ProxyRequest
+    VerifyToken1 -->|Invalid| Error403[403 INVALID_TOKEN]
+    VerifyToken2 -->|Valid| ProxyRequest
+    VerifyToken2 -->|Invalid| Error403
+    VerifyToken3 -->|Valid| ProxyRequest
+    VerifyToken3 -->|Invalid| Error403
+    
+    ProxyRequest --> RewriteURL[Rewrite URL]
+    RewriteURL --> ForwardRequest[Forward to Target Service]
+    ForwardRequest --> ReturnResponse[Return Response]
+    
+    HandleAuth --> ReturnResponse
+    Error404 --> ReturnResponse
+    Error403 --> ReturnResponse
+```
+
+## Error Handling
+
+All routing errors follow the unified `GatewayErrorSchema`:
+
+```json
+{
+  "route": "BUILD",
+  "status": 502,
+  "code": "MISSING_TARGET",
+  "message": "Missing target for /build",
+  "requestId": "uuid",
+  "timestamp": "2024-01-01T00:00:00.000Z"
+}
+```
+
+### Common Routing Errors
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `NOT_FOUND` | 404 | No route matched the request path |
+| `MISSING_TARGET` | 502 | Environment variable for target service URL not set |
+| `MISSING_TOKEN` | 401 | Token required but not provided (for `/build` routes) |
+| `INVALID_TOKEN` | 403 | Token verification failed |
+| `ROUTE_MISMATCH` | 403 | Token route doesn't match requested route |
+
+## Configuration
+
+### Environment Variables
+
+Configure target service URLs in `wrangler.toml`:
+
+```toml
+[vars]
+BUILD_SERVICE_URL = "https://build.metacogna.ai"
+KV_SERVICE_URL = "https://kv.metacogna.ai"
+CORE_SERVICE_URL = "https://parti.metacogna.ai"
+```
+
+### Service Bindings
+
+For internal communication, use Cloudflare service bindings:
+
+```toml
+[[services]]
+binding = "CORE_SERVICE"
+service = "metacogna"
+
+[[services]]
+binding = "PORTAL_SERVICE"
+service = "metacogna-ai-worker"
+```
+
+<Info>
+Service bindings are preferred over public URLs for security and performance.
+</Info>
+
+## Examples
+
+### Build Service Request
+
+```http
+GET /build/projects HTTP/1.1
+Host: api.metacogna.ai
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+**Gateway forwards to**: `https://build.metacogna.ai/projects`
+
+**Headers added**: `X-Gateway-Route: BUILD`
+
+**Headers removed**: `Authorization`
+
+### KV Service Request (Unauthenticated)
+
+```http
+GET /kv/data HTTP/1.1
+Host: api.metacogna.ai
+```
+
+**Gateway forwards to**: `https://kv.metacogna.ai/data`
+
+**No authentication required** (forwarded as-is)
+
+### Core Service Request (Authenticated)
+
+```http
+POST /core/ingest HTTP/1.1
+Host: api.metacogna.ai
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{"data": "..."}
+```
+
+**Gateway forwards to**: `https://parti.metacogna.ai/ingest`
+
+**Token verified** before forwarding
+
+## Related Documentation
+
+- [Authentication API](/gateway-api/api/authentication) - Token generation and verification
+- [Gateway Worker](/gateway-api/backend/worker) - Implementation details
+- [Routing Matrix](/gateway-api/overview#routing-matrix) - Complete routing reference
+

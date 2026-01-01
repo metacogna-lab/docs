@@ -1,0 +1,199 @@
+---
+title: "Design System"
+description: "Paper UI design system and component patterns"
+---
+
+MetaCogna RAG uses the Paper UI design system, which follows a "Digital Paper" design philosophy with hard edges, high contrast, and visible construction.
+
+## Design Philosophy
+
+The Paper UI system is built on three core principles:
+
+1. **Digital Paper** - Elements are physical sheets of paper layered on a surface
+2. **Hard Edges** - No rounded corners greater than 2px
+3. **High Contrast** - Strict polarity between Ink (dark) and Paper (light)
+
+## Color System
+
+### Semantic Colors
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| **Ink** | `#18181b` (Zinc 950) | Primary text, borders, hard shadows |
+| **Paper** | `#ffffff` (White) | Cards, modals, backgrounds |
+| **Surface** | `#f4f4f5` (Zinc 100) | Background/desk surface |
+| **Accent** | `#10b981` (Emerald 500) | Success states, highlights |
+| **Warning** | `#ef4444` (Red 500) | Errors, delete actions |
+
+### Dark Mode
+
+In dark mode, the polarity flips:
+- **Ink** becomes `#f4f4f5` (light)
+- **Paper** becomes `#18181b` (dark)
+
+## Typography
+
+Three distinct typefaces for different purposes:
+
+### 1. The Voice of Authority (Serif)
+
+- **Font**: `Playfair Display`
+- **Usage**: H1, H2, H3, Hero statements
+- **Style**: Bold, tight tracking (`tracking-tight`)
+- **Vibe**: Classic, editorial, serious
+
+### 2. The Voice of Utility (Sans-Serif)
+
+- **Font**: `Inter`
+- **Usage**: Body text, button labels
+- **Style**: Standard weights, generous line-height
+- **Vibe**: Invisible, highly legible, modern
+
+### 3. The Voice of the Machine (Monospace)
+
+- **Font**: `JetBrains Mono`
+- **Usage**: Metadata tags, IDs, terminal output
+- **Style**: Uppercase, smaller size (`text-xs`), wide tracking
+- **Vibe**: Raw data, code, engineering
+
+## Component Patterns
+
+### PaperCard
+
+The fundamental building block.
+
+**Styling:**
+- Border: `2px solid var(--color-ink)`
+- Shadow: `4px 4px 0px 0px var(--color-ink)`
+- Background: `var(--color-paper)`
+- Hover: Translate Y `-1px`, shadow increases to `6px 6px`
+
+```typescript
+<PaperCard>
+  <h2>Card Title</h2>
+  <p>Card content...</p>
+</PaperCard>
+```
+
+### PaperButton
+
+Buttons with physical interaction feel.
+
+**Variants:**
+- **Primary**: Solid Ink background, Paper text. Inverts to Accent on hover
+- **Ghost**: Transparent background, Ink text. Gains shadow on hover
+
+**Interaction:**
+- Active (click): Translates `2px 2px` down to "crush" shadow
+
+```typescript
+<PaperButton variant="primary" onClick={handleClick}>
+  Click Me
+</PaperButton>
+```
+
+### PaperInput
+
+Text input fields.
+
+**Styling:**
+- Border: `2px solid var(--color-ink)`
+- Focus: Accent border color
+- No rounded corners
+
+### PaperBadge
+
+Status indicators and labels.
+
+**Colors:**
+- `ink` - Default/dark
+- `accent` - Success/highlight
+- `warning` - Error/alert
+
+### PaperModal
+
+Modal dialogs with overlay.
+
+**Features:**
+- Overlay with reduced opacity
+- PaperCard styling
+- Close button (X icon)
+
+## Layout Principles
+
+### Grid System
+
+- **Fluid 12-column grid**
+- Responsive breakpoints
+- Generous padding inside cards (`p-6` or `p-8`)
+
+### Spacing
+
+- **Inside cards**: Generous padding (`p-6`, `p-8`)
+- **Between grouped elements**: Tight spacing (`gap-2`)
+- **Between sections**: Aggressive whitespace
+
+### Shadows
+
+- **Hard shadows**: No blur, solid blocks of color
+- **Format**: `{x}px {y}px 0px 0px {color}`
+- **Physical light source**: Top-left (shadows bottom-right)
+
+## Animation Patterns
+
+### Hover States
+
+- **Cards**: Lift effect (translate Y `-1px`)
+- **Buttons**: Shadow increase or color invert
+- **Links**: Underline animation
+
+### Loading States
+
+- **Spinner**: Rotating icon
+- **Skeleton**: Placeholder blocks with subtle animation
+- **Progress bars**: Animated stripe patterns
+
+## Visibility Principles
+
+### Visible Construction
+
+Metadata, IDs, and technical labels are visible UI elements:
+
+```typescript
+<PaperBadge>DOC_ID: PRD-2025</PaperBadge>
+<PaperBadge>SYSTEM_STATUS: ONLINE</PaperBadge>
+```
+
+### Technical Labels
+
+Use monospace font for technical information:
+- Document IDs
+- System status
+- Navigation labels
+- Metadata tags
+
+## Component Library
+
+The Paper UI component library includes:
+
+- `PaperCard` - Content containers
+- `PaperButton` - Interactive buttons
+- `PaperInput` - Text inputs
+- `PaperTextArea` - Multi-line inputs
+- `PaperSelect` - Dropdown selects
+- `PaperBadge` - Status indicators
+- `PaperModal` - Modal dialogs
+
+## Implementation
+
+Components are implemented in `components/PaperComponents.tsx` using:
+
+- **Tailwind CSS** - Utility-first styling
+- **Framer Motion** - Animations
+- **TypeScript** - Type safety
+
+## Related Documentation
+
+- [Frontend Components](/metacogna-rag/frontend/components) - Component usage
+- [Frontend Views](/metacogna-rag/frontend/views) - View implementations
+

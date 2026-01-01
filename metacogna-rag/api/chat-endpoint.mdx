@@ -1,0 +1,280 @@
+---
+title: "Chat Endpoint"
+description: "RAG-powered chat with multiple LLM providers"
+---
+
+The `/api/chat` endpoint combines vector search with LLM generation to provide context-aware responses based on uploaded documents.
+
+## Overview
+
+The chat endpoint performs:
+1. **Vector Search** - Retrieves relevant document chunks (if sources not provided)
+2. **Context Building** - Constructs RAG context from retrieved sources
+3. **LLM Generation** - Calls LLM provider (Workers AI, OpenAI, Anthropic, Google)
+4. **Response Formatting** - Returns response with sources and metadata
+
+## Endpoint
+
+### POST /api/chat
+
+<ParamField body="request">
+```typescript
+{
+  query: string;                    // User's question (required)
+  agentType?: string;               // Agent type for prompt selection
+  sources?: Source[];               // Pre-retrieved sources (optional)
+  llmConfig?: {                    // LLM configuration (optional)
+    provider: 'workers-ai' | 'google' | 'openai' | 'anthropic';
+    model: string;
+    maxTokens?: number;
+  };
+  systemPrompt?: string;            // Custom system prompt (optional)
+  temperature?: number;             // Default: 0.2
+  historyContext?: string;          // Chat history (optional)
+  userGoals?: string;              // User goals for personalization
+  userId?: string;                 // User ID (for rate limiting)
+  topK?: number;                    // Default: 5 (for search)
+}
+```
+</ParamField>
+
+<ParamField body="response">
+```typescript
+{
+  response: string;                // LLM generated response
+  sources: Source[];               // Retrieved sources
+  provider: string;                // LLM provider used
+  model: string;                   // Model used
+}
+```
+</ParamField>
+
+## Request Parameters
+
+### query (required)
+
+The user's question or prompt.
+
+```json
+{
+  "query": "What is retrieval-augmented generation?"
+}
+```
+
+### agentType (optional)
+
+Predefined agent type for automatic prompt selection. Available types:
+
+- `rag-chat` - General RAG assistant
+- `graph-analyst` - Knowledge graph analysis
+- `executive-summary` - Executive summaries
+- `technical-auditor` - Technical analysis
+- `future-planner` - Strategic planning
+- `coordinator` - Idea synthesis
+- `critic` - Critical analysis
+
+```json
+{
+  "query": "Analyze the knowledge graph structure",
+  "agentType": "graph-analyst"
+}
+```
+
+### sources (optional)
+
+Pre-retrieved sources. If not provided, the endpoint performs vector search automatically.
+
+```json
+{
+  "query": "Explain RAG systems",
+  "sources": [
+    {
+      "id": "chunk-uuid",
+      "text": "Retrieval-Augmented Generation combines...",
+      "metadata": { "documentTitle": "RAG Overview" }
+    }
+  ]
+}
+```
+
+### llmConfig (optional)
+
+LLM provider and model configuration. Defaults to Workers AI if not specified.
+
+```json
+{
+  "query": "What is AI?",
+  "llmConfig": {
+    "provider": "openai",
+    "model": "gpt-4o",
+    "maxTokens": 1000
+  }
+}
+```
+
+**Supported Providers:**
+- `workers-ai` - Cloudflare Workers AI (default, no API key required)
+- `google` - Google Gemini (requires `GEMINI_API_KEY`)
+- `openai` - OpenAI (requires `OPENAI_API_KEY`)
+- `anthropic` - Anthropic Claude (requires `ANTHROPIC_API_KEY`)
+
+### systemPrompt (optional)
+
+Custom system prompt. Overrides `agentType` if provided.
+
+```json
+{
+  "query": "Explain quantum computing",
+  "systemPrompt": "You are a quantum physics expert. Provide detailed explanations."
+}
+```
+
+### temperature (optional)
+
+Controls response creativity. Default: `0.2` (more deterministic).
+
+- `0.0` - Very deterministic
+- `0.7` - Balanced
+- `1.0` - More creative
+
+### historyContext (optional)
+
+Previous conversation context for continuity.
+
+```json
+{
+  "query": "Tell me more about that",
+  "historyContext": "Previous conversation: User asked about RAG systems..."
+}
+```
+
+### userGoals (optional)
+
+User goals for personalized responses.
+
+```json
+{
+  "query": "What should I learn next?",
+  "userGoals": "Build RAG system, learn vector databases"
+}
+```
+
+## Rate Limiting
+
+- **Limit**: 10 requests per minute per user
+- **Headers**: 
+  - `X-RateLimit-Remaining` - Remaining requests
+  - `X-RateLimit-Reset` - Reset timestamp
+- **Status**: `429` when limit exceeded
+
+<ParamField body="response" status="429">
+```json
+{
+  "error": "Rate limit exceeded",
+  "message": "Too many chat requests. Please try again later.",
+  "resetAt": 1704067260000
+}
+```
+</ParamField>
+
+## Example Requests
+
+### Basic Chat
+
+```typescript
+const response = await fetch('https://parti.metacogna.ai/api/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    query: 'What is artificial intelligence?',
+    userId: 'user-uuid'
+  })
+});
+
+const { response: answer, sources } = await response.json();
+```
+
+### With Agent Type
+
+```typescript
+const response = await fetch('https://parti.metacogna.ai/api/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    query: 'Analyze the knowledge graph structure',
+    agentType: 'graph-analyst',
+    userId: 'user-uuid'
+  })
+});
+```
+
+### With Custom LLM
+
+```typescript
+const response = await fetch('https://parti.metacogna.ai/api/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    query: 'Explain RAG systems',
+    llmConfig: {
+      provider: 'openai',
+      model: 'gpt-4o',
+      maxTokens: 1000
+    },
+    temperature: 0.7,
+    userId: 'user-uuid'
+  })
+});
+```
+
+### With Pre-retrieved Sources
+
+```typescript
+const response = await fetch('https://parti.metacogna.ai/api/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    query: 'Summarize these documents',
+    sources: [
+      { id: 'chunk-1', text: 'Document 1 content...' },
+      { id: 'chunk-2', text: 'Document 2 content...' }
+    ],
+    userId: 'user-uuid'
+  })
+});
+```
+
+## Environment Setup
+
+### API Keys (Optional)
+
+API keys are stored as Cloudflare secrets (not in `wrangler.toml`):
+
+```bash
+# Google Gemini (optional)
+bun wrangler secret put GEMINI_API_KEY
+
+# OpenAI (optional)
+bun wrangler secret put OPENAI_API_KEY
+
+# Anthropic (optional)
+bun wrangler secret put ANTHROPIC_API_KEY
+```
+
+<Info>
+If no API keys are set, the endpoint uses Cloudflare Workers AI (free, no keys required).
+</Info>
+
+## Benefits
+
+1. **Security** - API keys never exposed to frontend
+2. **Cost Control** - Centralized rate limiting and usage tracking
+3. **Flexibility** - Easy to switch between LLM providers
+4. **Performance** - Single request for search + generation
+5. **Consistency** - All API calls go through worker
+
+## Related Documentation
+
+- [API Endpoints](/metacogna-rag/api/endpoints) - Complete API reference
+- [Backend Worker](/metacogna-rag/backend/worker) - Worker implementation
+
