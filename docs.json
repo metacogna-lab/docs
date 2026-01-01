@@ -8,18 +8,19 @@
     "dark": "#15803D"
   },
   "favicon": "/favicon.svg",
+  "openapi": "api-reference/openapi.json",
   "contextual": {
-   "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
- },
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  },
   "navigation": {
     "groups": [
       {
@@ -163,20 +164,6 @@
       }
     ]
   },
-  "global": {
-    "anchors": [
-      {
-        "anchor": "Documentation",
-        "href": "https://mintlify.com/docs",
-        "icon": "book-open-cover"
-      },
-      {
-        "anchor": "Blog",
-        "href": "https://mintlify.com/blog",
-        "icon": "newspaper"
-      }
-    ]
-  },
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
@@ -184,15 +171,11 @@
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "GitHub",
+        "href": "https://github.com/metacogna-lab",
+        "icon": "github"
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
+    ]
   },
   "footer": {
     "socials": {

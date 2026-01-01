@@ -1,97 +1,163 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "MetaCogna Suite Documentation"
+description: "Thinking About Thinking - Documentation for MetaCogna's cognitive tools, architectures, and agents"
 ---
 
-## Setting up
+## Thinking About Thinking
 
-Get your documentation site up and running in minutes.
+MetaCogna builds systems that think about thinking. We are motivated by the quiet awe of the universe, the strange joy of discovering how things really behave, and the belief that better thinking leads to better outcomes.
 
 <Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
+  title="Explore on GitHub"
+  icon="github"
+  href="https://github.com/metacogna-lab"
   horizontal
 >
-  Follow our three step quickstart guide.
+  View our source code, contribute, and explore the MetaCogna Suite repositories.
 </Card>
 
-## Make it yours
+## The MetaCogna Suite
 
-Design a docs site that looks great and empowers your users.
+A collection of cognitive tools, architectures, and agents designed to augment human reasoning through structured intelligence.
 
-<Columns cols={2}>
+<CardGroup cols={2}>
   <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
+    title="Gateway API"
+    icon="route"
+    href="/gateway-api/overview"
   >
-    Edit your docs locally and preview them in real time.
+    Central authentication and routing gateway for all MetaCogna services. JWT-based authentication and intelligent request proxying.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
 
-## Create beautiful pages
+  <Card
+    title="MetaCogna RAG"
+    icon="brain"
+    href="/metacogna-rag/overview"
+  >
+    Retrieval-Augmented Generation system with knowledge graphs, document management, and multi-agent reasoning capabilities.
+  </Card>
 
-Everything you need to create world-class documentation.
+  <Card
+    title="MetaCogna.ai Landing"
+    icon="globe"
+    href="/metacogna-ai-landing/overview"
+  >
+    Marketing website and client portal showcasing MetaCogna's services and methodology.
+  </Card>
 
-<Columns cols={2}>
   <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
+    title="Parti Architecture"
+    icon="sitemap"
+    href="/parti-architecture/overview"
   >
-    Use MDX to style your docs pages.
+    Prompt-driven architecture generation using AI agents to create complete system architectures from natural language descriptions.
   </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+</CardGroup>
 
-## Need inspiration?
+## Design System
 
 <Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
+  title="Paper UI Design System"
+  icon="palette"
+  href="/design/system"
+  horizontal
 >
-  Browse our showcase of exceptional documentation sites.
+  Digital Paper, Hard Edges, High Contrast. Documentation for our design system philosophy and component library.
 </Card>
+
+## Quick Navigation
+
+<CardGroup cols={2}>
+  <Card
+    title="Get Started"
+    icon="rocket"
+    href="/quickstart"
+  >
+    Begin working with the MetaCogna Suite. Installation, setup, and core concepts.
+  </Card>
+
+  <Card
+    title="API Reference"
+    icon="code"
+    href="/api-reference/introduction"
+  >
+    Complete API documentation with interactive examples and endpoint specifications.
+  </Card>
+
+  <Card
+    title="Development Guide"
+    icon="wrench"
+    href="/development"
+  >
+    Setup your local development environment and start contributing.
+  </Card>
+
+  <Card
+    title="Design Guide"
+    icon="brush"
+    href="/design/guide"
+  >
+    Writing guidelines, component usage, and design patterns for documentation.
+  </Card>
+</CardGroup>
+
+## Philosophy
+
+We treat thinking as a **system**, not a personality trait. MetaCogna Labs is intentionally small. That is not a limitation; it is a feature. It allows fast iteration without institutional drag, and lets ideas be tested before they harden into dogma.
+
+Our systems operate on principles of:
+- **Visible Construction** - Metadata, IDs, and technical details are visible UI elements
+- **Hard Edges** - Minimal border radius, clear boundaries, defined structures
+- **High Contrast** - Strict polarity between concepts, clear hierarchies
+- **Multi-Agent Coordination** - Specialized agents that critique, synthesize, and build upon ideas
+
+## Core Concepts
+
+### Systems Architecture
+
+MetaCogna systems are built on Cloudflare Workers, using:
+- **JWT Authentication** - Secure token-based access control
+- **Service Bindings** - Secure inter-worker communication
+- **R2 Storage** - Object storage for documents and assets
+- **D1 Databases** - Serverless SQLite for structured data
+- **Vectorize** - Vector databases for semantic search
+
+### Cognitive Augmentation
+
+Our tools enhance reasoning through:
+- **RAG (Retrieval-Augmented Generation)** - Context-aware responses from knowledge bases
+- **Knowledge Graphs** - Entity and relationship extraction
+- **Multi-Agent Systems** - Coordinated, specialized agents with distinct roles
+- **Metacognitive Simulation** - Systems that think about their own thinking processes
+
+## Resources
+
+<CardGroup cols={3}>
+  <Card
+    title="GitHub"
+    icon="github"
+    href="https://github.com/metacogna-lab"
+  >
+    Source code and repositories
+  </Card>
+
+  <Card
+    title="Website"
+    icon="globe"
+    href="https://metacogna.ai"
+  >
+    Learn more about MetaCogna Labs
+  </Card>
+
+  <Card
+    title="Documentation"
+    icon="book"
+    href="/quickstart"
+  >
+    Get started with our documentation
+  </Card>
+</CardGroup>
+
+<Note>
+**New to MetaCogna?** Start with the [Quickstart Guide](/quickstart) to understand our architecture and begin working with the suite. For API integration, see the [Gateway API Overview](/gateway-api/overview) or [API Reference](/api-reference/introduction).
+</Note>
