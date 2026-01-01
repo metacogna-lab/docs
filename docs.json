@@ -20,147 +20,149 @@
      "vscode"
    ]
  },
-  "navigation": [
-    {
-      "group": "Getting Started",
-      "pages": [
-        "index",
-        "quickstart",
-        "development"
-      ]
-    },
-    {
-      "group": "Gateway API",
-      "pages": [
-        "gateway-api/overview",
-        {
-          "group": "API",
-          "pages": [
-            "gateway-api/api/authentication",
-            "gateway-api/api/routing"
-          ]
-        },
-        {
-          "group": "Backend",
-          "pages": [
-            "gateway-api/backend/worker",
-            "gateway-api/backend/shared-package"
-          ]
-        }
-      ]
-    },
-    {
-      "group": "MetaCogna RAG",
-      "pages": [
-        "metacogna-rag/overview",
-        {
-          "group": "API",
-          "pages": [
-            "metacogna-rag/api/endpoints",
-            "metacogna-rag/api/chat-endpoint"
-          ]
-        },
-        {
-          "group": "Frontend",
-          "pages": [
-            "metacogna-rag/frontend/views",
-            "metacogna-rag/frontend/components"
-          ]
-        },
-        {
-          "group": "Backend",
-          "pages": [
-            "metacogna-rag/backend/worker",
-            "metacogna-rag/backend/services"
-          ]
-        },
-        {
-          "group": "Design",
-          "pages": [
-            "metacogna-rag/design/system"
-          ]
-        }
-      ]
-    },
-    {
-      "group": "MetaCogna.ai Landing",
-      "pages": [
-        "metacogna-ai-landing/overview",
-        {
-          "group": "Frontend",
-          "pages": [
-            "metacogna-ai-landing/frontend/components",
-            "metacogna-ai-landing/frontend/services"
-          ]
-        },
-        {
-          "group": "API",
-          "pages": [
-            "metacogna-ai-landing/api/workers"
-          ]
-        },
-        {
-          "group": "Design",
-          "pages": [
-            "metacogna-ai-landing/design/system"
-          ]
-        }
-      ]
-    },
-    {
-      "group": "Parti Architecture",
-      "pages": [
-        "parti-architecture/overview",
-        {
-          "group": "API",
-          "pages": [
-            "parti-architecture/api/supervisor",
-            "parti-architecture/api/agents"
-          ]
-        },
-        {
-          "group": "Frontend",
-          "pages": [
-            "parti-architecture/frontend/canvas"
-          ]
-        },
-        {
-          "group": "Backend",
-          "pages": [
-            "parti-architecture/backend/supervisor",
-            "parti-architecture/backend/agents"
-          ]
-        },
-        {
-          "group": "Design",
-          "pages": [
-            "parti-architecture/design/architecture"
-          ]
-        }
-      ]
-    },
-    {
-      "group": "Design System",
-      "pages": [
-        "design/system",
-        "design/guide",
-        "design/review-checklist",
-        "design/templates",
-        "design/components",
-        "design/tailwind-config",
-        "design/baseline-components",
-        "design/application-review",
-        {
-          "group": "Project Reviews",
-          "pages": [
-            "design/reviews/metacogna-rag-design",
-            "design/reviews/metacogna-ai-landing-design",
-            "design/reviews/parti-architecture-design"
-          ]
-        }
-      ]
-    }
-  ],
+  "navigation": {
+    "groups": [
+      {
+        "group": "Getting Started",
+        "pages": [
+          "index",
+          "quickstart",
+          "development"
+        ]
+      },
+      {
+        "group": "Gateway API",
+        "pages": [
+          "gateway-api/overview",
+          {
+            "group": "API",
+            "pages": [
+              "gateway-api/api/authentication",
+              "gateway-api/api/routing"
+            ]
+          },
+          {
+            "group": "Backend",
+            "pages": [
+              "gateway-api/backend/worker",
+              "gateway-api/backend/shared-package"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MetaCogna RAG",
+        "pages": [
+          "metacogna-rag/overview",
+          {
+            "group": "API",
+            "pages": [
+              "metacogna-rag/api/endpoints",
+              "metacogna-rag/api/chat-endpoint"
+            ]
+          },
+          {
+            "group": "Frontend",
+            "pages": [
+              "metacogna-rag/frontend/views",
+              "metacogna-rag/frontend/components"
+            ]
+          },
+          {
+            "group": "Backend",
+            "pages": [
+              "metacogna-rag/backend/worker",
+              "metacogna-rag/backend/services"
+            ]
+          },
+          {
+            "group": "Design",
+            "pages": [
+              "metacogna-rag/design/system"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MetaCogna.ai Landing",
+        "pages": [
+          "metacogna-ai-landing/overview",
+          {
+            "group": "Frontend",
+            "pages": [
+              "metacogna-ai-landing/frontend/components",
+              "metacogna-ai-landing/frontend/services"
+            ]
+          },
+          {
+            "group": "API",
+            "pages": [
+              "metacogna-ai-landing/api/workers"
+            ]
+          },
+          {
+            "group": "Design",
+            "pages": [
+              "metacogna-ai-landing/design/system"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Parti Architecture",
+        "pages": [
+          "parti-architecture/overview",
+          {
+            "group": "API",
+            "pages": [
+              "parti-architecture/api/supervisor",
+              "parti-architecture/api/agents"
+            ]
+          },
+          {
+            "group": "Frontend",
+            "pages": [
+              "parti-architecture/frontend/canvas"
+            ]
+          },
+          {
+            "group": "Backend",
+            "pages": [
+              "parti-architecture/backend/supervisor",
+              "parti-architecture/backend/agents"
+            ]
+          },
+          {
+            "group": "Design",
+            "pages": [
+              "parti-architecture/design/architecture"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Design System",
+        "pages": [
+          "design/system",
+          "design/guide",
+          "design/review-checklist",
+          "design/templates",
+          "design/components",
+          "design/tailwind-config",
+          "design/baseline-components",
+          "design/application-review",
+          {
+            "group": "Project Reviews",
+            "pages": [
+              "design/reviews/metacogna-rag-design",
+              "design/reviews/metacogna-ai-landing-design",
+              "design/reviews/parti-architecture-design"
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "global": {
     "anchors": [
       {
@@ -191,16 +193,6 @@
       "label": "Dashboard",
       "href": "https://dashboard.mintlify.com"
     }
-  },
-  "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "mcp",
-      "cursor"
-    ]
   },
   "footer": {
     "socials": {
