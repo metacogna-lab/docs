@@ -1,0 +1,297 @@
+---
+title: "Backend Services"
+description: "Service layer and utilities"
+---
+
+The worker uses a service-oriented architecture with specialized services for different concerns.
+
+## Service Structure
+
+```
+worker/src/
+├── services/
+│   ├── r2.ts              # R2 storage service
+│   └── summarization.ts   # AI summarization service
+├── handlers/
+│   ├── signup.ts          # Signup handler
+│   └── upload.ts          # Upload handler
+└── utils/
+    ├── r2-keys.ts         # R2 key generation
+    ├── uuid.ts            # UUID generation
+    └── password.ts        # Password hashing
+```
+
+## R2 Storage Service
+
+**File**: `services/r2.ts`
+
+Handles document storage in R2 buckets.
+
+### uploadToR2
+
+Uploads content to R2 with metadata.
+
+```typescript
+async function uploadToR2(
+  bucket: R2Bucket,
+  key: string,
+  content: string,
+  metadata: Record<string, string>
+): Promise<void>
+```
+
+**Parameters:**
+- `bucket`: R2 bucket instance
+- `key`: Object key (path)
+- `content`: Content to upload
+- `metadata`: Custom metadata key-value pairs
+
+**Example:**
+```typescript
+await uploadToR2(
+  env.metacogna_vault,
+  'users/user-123/documents/doc.pdf',
+  pdfContent,
+  { userId: 'user-123', docId: 'doc-456', title: 'Document Title' }
+);
+```
+
+### Key Generation
+
+R2 keys are generated using a utility function:
+
+```typescript
+function generateR2DocumentKey(
+  userId: string,
+  docId: string,
+  filename: string
+): string {
+  return `users/${userId}/documents/${docId}-${filename}`;
+}
+```
+
+**Format**: `users/{userId}/documents/{docId}-{filename}`
+
+## Summarization Service
+
+**File**: `services/summarization.ts`
+
+AI-powered text summarization using Workers AI.
+
+### summarizeGoals
+
+Summarizes user goals using Workers AI.
+
+```typescript
+async function summarizeGoals(
+  ai: any,
+  rawGoals: string
+): Promise<string>
+```
+
+**Parameters:**
+- `ai`: Workers AI binding
+- `rawGoals`: Raw user goals text
+
+**Model**: `@cf/meta/llama-3-8b-instruct`
+
+**Output**: Summarized goals (max 200 characters)
+
+## Signup Handler
+
+**File**: `handlers/signup.ts`
+
+Handles admin-only user creation.
+
+### handleSignup
+
+Creates new users with goal summarization and optional file uploads.
+
+```typescript
+async function handleSignup(
+  request: Request,
+  env: Env
+): Promise<Response>
+```
+
+**Process:**
+1. Validate admin authentication
+2. Extract form data (name, email, password, goals, files)
+3. Generate user ID (UUID)
+4. Hash password (SHA-256)
+5. Summarize goals using AI
+6. Upload files to R2 (if provided)
+7. Create user record in D1
+8. Return success response
+
+## Upload Handler
+
+**File**: `handlers/upload.ts`
+
+Handles multi-file document uploads.
+
+### handleMultiFileUpload
+
+Processes multiple file uploads with metadata.
+
+```typescript
+async function handleMultiFileUpload(
+  request: Request,
+  env: Env
+): Promise<UploadResponse>
+```
+
+**Process:**
+1. Parse multipart form data
+2. Validate files (.md, .pdf, .txt)
+3. Generate document IDs
+4. Upload to R2
+5. Trigger ingestion pipeline
+6. Return upload status
+
+## Utility Functions
+
+### UUID Generation
+
+**File**: `utils/uuid.ts`
+
+Generates UUID v4 identifiers.
+
+```typescript
+function generateUUID(): string
+```
+
+### R2 Key Generation
+
+**File**: `utils/r2-keys.ts`
+
+Generates standardized R2 keys.
+
+```typescript
+function generateR2DocumentKey(
+  userId: string,
+  docId: string,
+  filename: string
+): string
+```
+
+### Password Hashing
+
+**File**: `utils/password.ts`
+
+SHA-256 password hashing.
+
+```typescript
+async function hashPassword(
+  username: string,
+  password: string
+): Promise<string>
+```
+
+**Format**: `SHA256(username + password)`
+
+## Database Schema
+
+### users Table
+
+```sql
+CREATE TABLE users (
+    id TEXT PRIMARY KEY,
+    username TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE,
+    name TEXT,
+    passwordHash TEXT NOT NULL,
+    goals TEXT,
+    isAdmin BOOLEAN DEFAULT 0,
+    createdAt INTEGER NOT NULL,
+    lastLogin INTEGER
+);
+```
+
+### documents Table
+
+```sql
+CREATE TABLE documents (
+    id TEXT PRIMARY KEY,
+    userId TEXT REFERENCES users(id),
+    title TEXT NOT NULL,
+    content TEXT,              -- Preview (first 500 chars)
+    r2Key TEXT,                -- R2 object key
+    metadata TEXT,             -- JSON string
+    status TEXT DEFAULT 'completed',
+    createdAt INTEGER NOT NULL,
+    uploadedAt INTEGER
+);
+```
+
+### graph_nodes Table
+
+```sql
+CREATE TABLE graph_nodes (
+    id TEXT PRIMARY KEY,
+    label TEXT NOT NULL,
+    type TEXT NOT NULL,        -- Entity type (Concept, Person, etc.)
+    summary TEXT,
+    documentId TEXT
+);
+```
+
+### graph_edges Table
+
+```sql
+CREATE TABLE graph_edges (
+    id TEXT PRIMARY KEY,
+    source TEXT NOT NULL,
+    target TEXT NOT NULL,
+    relation TEXT NOT NULL,
+    documentId TEXT,
+    FOREIGN KEY (source) REFERENCES graph_nodes(id),
+    FOREIGN KEY (target) REFERENCES graph_nodes(id)
+);
+```
+
+### Indexes
+
+Performance indexes on frequently queried columns:
+
+- `idx_users_username` - Username lookups
+- `idx_documents_userId` - User document queries
+- `idx_documents_status` - Status filtering
+- `idx_graph_edges_source` - Graph traversal
+- `idx_graph_edges_target` - Graph traversal
+
+## Caching Strategy
+
+### KV Cache
+
+Graph data is cached in KV for 5 minutes:
+
+```typescript
+const cacheKey = 'graph:latest';
+await env.KV.put(cacheKey, JSON.stringify(graphData), {
+  expirationTtl: 300  // 5 minutes
+});
+```
+
+**Cache Invalidation:**
+- Cache cleared on new document ingestion
+- Cache key: `graph:latest`
+
+## Error Handling
+
+Services use consistent error handling:
+
+```typescript
+try {
+  // Service operation
+} catch (error) {
+  console.error('Service error:', error);
+  return errorResponse('Service operation failed', 500);
+}
+```
+
+## Related Documentation
+
+- [Backend Worker](/metacogna-rag/backend/worker) - Worker architecture
+- [API Endpoints](/metacogna-rag/api/endpoints) - API reference
+

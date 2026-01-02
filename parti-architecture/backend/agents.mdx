@@ -1,0 +1,185 @@
+---
+title: "Backend Agents"
+description: "Specialized agent worker implementations"
+---
+
+Each agent worker is a specialized Cloudflare Worker that generates artifacts for a specific phase of software architecture.
+
+## Agent Structure
+
+All agents follow a consistent structure:
+
+```
+{agent-name}/
+├── src/
+│   ├── index.ts           # Main worker handler
+│   └── systemPrompts.ts   # Agent system prompt
+├── package.json
+└── wrangler.toml
+```
+
+## Agent Interface
+
+All agents implement the same interface:
+
+```typescript
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    // 1. Parse request body
+    // 2. Extract context and user input
+    // 3. Call LLM with system prompt
+    // 4. Format response
+    // 5. Return artifact
+  }
+};
+```
+
+## System Prompts
+
+Each agent has a specialized system prompt defining:
+
+- **Role**: Agent's expertise (e.g., "Senior Product Manager")
+- **Goal**: Primary objective
+- **Instructions**: Step-by-step process
+- **Output Structure**: Required format
+- **Constraints**: Rules and limitations
+
+### PRD Agent Prompt
+
+Focuses on:
+- Executive summary
+- User personas
+- Functional requirements
+- MoSCoW roadmap
+
+### Data Agent Prompt
+
+Focuses on:
+- Entity identification
+- Relationship modeling
+- Database schema design
+- Migration strategies
+
+### Design Agent Prompt
+
+Focuses on:
+- Design tokens
+- Component library
+- UI/UX patterns
+- Accessibility
+
+### Logic Agent Prompt
+
+Focuses on:
+- Business rules
+- State machines
+- Validation logic
+- **Triggers HITL interrupt**
+
+### API Agent Prompt
+
+Focuses on:
+- RESTful API design
+- Resource modeling
+- Request/response schemas
+- OpenAPI specification
+
+### Frontend Agent Prompt
+
+Focuses on:
+- Component architecture
+- State management
+- Routing structure
+- Performance optimization
+
+### Deployment Agent Prompt
+
+Focuses on:
+- Infrastructure as Code
+- CI/CD pipelines
+- Monitoring and observability
+- Security configuration
+
+## Request Format
+
+Agents receive requests with:
+
+```typescript
+{
+  system_state: {
+    current_phase: string;
+    project_id: string;
+  };
+  context: string;        // Previous artifacts
+  user_input: string;     // Product seed or phase input
+}
+```
+
+## Response Format
+
+Agents return responses in:
+
+```typescript
+{
+  system_state: {
+    current_phase: string;
+    status: 'complete' | 'interrupted';
+    interrupt_signal?: boolean;
+  };
+  artifact: {
+    type: 'markdown' | 'code';
+    content: string;
+  };
+  trace: {
+    agent: string;
+    timestamp: string;
+  };
+}
+```
+
+## LLM Integration
+
+Agents use Gemini API for LLM calls:
+
+```typescript
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+
+const result = await model.generateContent(prompt);
+const response = result.response.text();
+```
+
+## Error Handling
+
+Agents include error handling:
+
+```typescript
+try {
+  // Agent execution
+} catch (error) {
+  return new Response(JSON.stringify({
+    error: error.message,
+    system_state: { status: 'error' }
+  }), { status: 500 });
+}
+```
+
+## Service Bindings
+
+Agents are called via Cloudflare service bindings:
+
+```typescript
+// In supervisor wrangler.toml
+[[services]]
+binding = "PRD_AGENT"
+service = "parti-prd-agent"
+```
+
+## Related Documentation
+
+- [Backend Supervisor](/parti-architecture/backend/supervisor) - Orchestration
+- [Agent API](/parti-architecture/api/agents) - API reference
+- [Design Architecture](/parti-architecture/design/architecture) - System design
+

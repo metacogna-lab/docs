@@ -1,0 +1,246 @@
+---
+title: "Shared Package"
+description: "JWT utilities and shared types"
+---
+
+The `@gateway/shared` package provides JWT token creation/verification utilities and shared TypeScript types used across the gateway system.
+
+## Package Structure
+
+```
+packages/shared/
+├── src/
+│   ├── gateway.ts    # JWT utilities, schemas
+│   └── index.ts      # Exports
+└── package.json
+```
+
+## ProjectRoute Enum
+
+Defines the available route types:
+
+```typescript
+export enum ProjectRoute {
+  AUTH = 'AUTH',
+  KV = 'KV',
+  BUILD = 'BUILD',
+  CORE = 'CORE',
+}
+```
+
+## GatewayErrorSchema
+
+Unified error response schema using Zod:
+
+```typescript
+export const GatewayErrorSchema = z.object({
+  route: z.nativeEnum(ProjectRoute),
+  status: z.number().int().min(400).max(599),
+  code: z.string().min(1),
+  message: z.string().min(1),
+  requestId: z.string().min(8).optional(),
+  timestamp: z.string().datetime(),
+  details: z.record(z.any()).optional(),
+});
+
+export type GatewayError = z.infer<typeof GatewayErrorSchema>;
+```
+
+### Error Response Example
+
+```json
+{
+  "route": "BUILD",
+  "status": 401,
+  "code": "INVALID_TOKEN",
+  "message": "Unauthorized request",
+  "requestId": "550e8400-e29b-41d4-a716-446655440000",
+  "timestamp": "2024-01-01T00:00:00.000Z",
+  "details": {}
+}
+```
+
+## GatewayTokenClaimsSchema
+
+JWT token claims schema:
+
+```typescript
+export const GatewayTokenClaimsSchema = z.object({
+  projectId: z.string().min(4),
+  route: z.nativeEnum(ProjectRoute),
+  scopes: z.array(z.string().min(1)).default([]),
+  environment: z.enum(['staging', 'production']).default('production'),
+  issuedBy: z.string().default('gateway.metacogna.ai'),
+});
+
+export type GatewayTokenClaims = z.infer<typeof GatewayTokenClaimsSchema>;
+```
+
+## JWT Functions
+
+### createGatewayToken
+
+Creates a signed JWT token for downstream service authentication.
+
+```typescript
+export const createGatewayToken = async (
+  claims: GatewayTokenClaims,
+  secret: string,
+  options: CreateGatewayTokenOptions = {}
+) => {
+  const payload = GatewayTokenClaimsSchema.parse(claims);
+  const jwt = new SignJWT({
+    projectId: payload.projectId,
+    route: payload.route,
+    scopes: payload.scopes,
+    environment: payload.environment,
+    issuedBy: payload.issuedBy,
+  })
+    .setProtectedHeader({ alg: options.algorithm ?? 'HS256', typ: 'JWT' })
+    .setIssuer(options.issuer ?? DEFAULT_ISSUER)
+    .setAudience(options.audience ?? DEFAULT_AUDIENCE)
+    .setSubject(options.subject ?? payload.projectId)
+    .setIssuedAt()
+    .setExpirationTime(options.expiresIn ?? '1h');
+
+  return jwt.sign(secretToKey(secret));
+};
+```
+
+#### Options
+
+```typescript
+interface CreateGatewayTokenOptions {
+  issuer?: string;
+  subject?: string;
+  audience?: string | string[];
+  expiresIn?: string | number;    // Default: '1h'
+  algorithm?: 'HS256' | 'HS384' | 'HS512';  // Default: 'HS256'
+}
+```
+
+#### Default Values
+
+- **Issuer**: `gateway.metacogna.ai`
+- **Audience**: `metacogna-clients`
+- **Algorithm**: `HS256`
+- **Expiration**: `1h`
+
+### verifyGatewayToken
+
+Verifies and decodes a JWT token.
+
+```typescript
+export interface VerifyGatewayTokenResult {
+  payload: JWTPayload;
+  claims: GatewayTokenClaims;
+}
+
+export const verifyGatewayToken = async (
+  token: string,
+  secret: string,
+  options: VerifyGatewayTokenOptions = {}
+): Promise<VerifyGatewayTokenResult> => {
+  const { payload } = await jwtVerify(token, secretToKey(secret), {
+    issuer: options.issuer ?? DEFAULT_ISSUER,
+    audience: options.audience ?? DEFAULT_AUDIENCE,
+    ...options,
+  });
+
+  return {
+    payload,
+    claims: GatewayTokenClaimsSchema.parse({
+      projectId: payload.projectId,
+      route: payload.route,
+      scopes: payload.scopes ?? [],
+      environment: payload.environment ?? 'production',
+      issuedBy: payload.issuedBy ?? DEFAULT_ISSUER,
+    }),
+  };
+};
+```
+
+#### Options
+
+```typescript
+interface VerifyGatewayTokenOptions extends Omit<JWTVerifyOptions, 'audience' | 'issuer'> {
+  issuer?: string | string[];
+  audience?: string | string[];
+}
+```
+
+## Usage Examples
+
+### Creating an Admin Token
+
+```typescript
+import { createGatewayToken, ProjectRoute } from '@gateway/shared';
+
+const token = await createGatewayToken(
+  {
+    projectId: 'admin-user-id',
+    route: ProjectRoute.AUTH,
+    scopes: ['admin'],
+    environment: 'production',
+    issuedBy: 'gateway.metacogna.ai',
+  },
+  process.env.GATEWAY_JWT_SECRET!
+);
+```
+
+### Creating a Guest Token
+
+```typescript
+const guestToken = await createGatewayToken(
+  {
+    projectId: 'guest',
+    route: ProjectRoute.BUILD,
+    scopes: ['guest'],
+    environment: 'staging',
+    issuedBy: 'gateway.metacogna.ai',
+  },
+  process.env.GATEWAY_JWT_SECRET!
+);
+```
+
+### Verifying a Token
+
+```typescript
+import { verifyGatewayToken } from '@gateway/shared';
+
+try {
+  const { claims } = await verifyGatewayToken(
+    token,
+    process.env.GATEWAY_JWT_SECRET!
+  );
+  
+  console.log(`User: ${claims.projectId}`);
+  console.log(`Route: ${claims.route}`);
+  console.log(`Scopes: ${claims.scopes}`);
+} catch (error) {
+  console.error('Token verification failed:', error);
+}
+```
+
+## Dependencies
+
+The shared package uses:
+
+- **`jose`** - JWT signing and verification
+- **`zod`** - Schema validation
+
+## Building the Package
+
+The shared package is built as part of the workspace:
+
+```bash
+cd gateway-api
+bun install
+bun run build  # Builds all packages
+```
+
+## Related Documentation
+
+- [Authentication API](/gateway-api/api/authentication) - How tokens are used
+- [Gateway Worker](/gateway-api/backend/worker) - Worker implementation
+

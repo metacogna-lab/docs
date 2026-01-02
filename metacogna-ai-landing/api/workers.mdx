@@ -1,0 +1,125 @@
+---
+title: "API Workers"
+description: "Cloudflare Workers for backend functionality"
+---
+
+MetaCogna.ai Landing uses Cloudflare Workers for backend API functionality, including portal management and lead ingestion.
+
+## Workers
+
+### Portal Worker
+
+**File**: `workers/worker.js`
+
+Main portal API worker providing:
+
+- **Portal updates**: GET/PATCH endpoints for updates
+- **Goals management**: Goal tracking and status
+- **Tool links**: Quick-access tool URLs
+- **Search functionality**: Portal-wide search
+- **SSO integration**: Single sign-on initiation
+- **Linear integration**: Task fetching
+- **Notion integration**: Page fetching
+- **Organization matrix**: Team overview
+
+#### Endpoints
+
+**GET /api/portal/updates**
+Returns array of portal updates.
+
+**PATCH /api/portal/updates/:id**
+Updates specific update fields.
+
+**GET /api/portal/goals**
+Returns project goals.
+
+**GET /api/portal/tools**
+Returns tool links.
+
+**GET /api/portal/search**
+Portal-wide search.
+
+**GET /api/portal/status**
+Portal status information.
+
+#### Authentication
+
+Uses JWT authentication with secret verification:
+
+```javascript
+async function verifyJwt(token, secret) {
+  // JWT verification logic
+}
+```
+
+#### Storage
+
+Uses Cloudflare Workers KV for data storage:
+
+- **Namespace**: `PORTAL_UPDATES`
+- **Key format**: `update:{id}`, `goal:{id}`, etc.
+
+### Gateway Worker
+
+**File**: `workers/gateway.ts`
+
+Gateway worker for routing and proxying requests.
+
+### Lead Ingest Worker
+
+**File**: `workers/lead-ingest.ts`
+
+HubSpot lead ingestion worker:
+
+- **Lead capture**: Form submissions
+- **HubSpot API**: CRM integration
+- **Data transformation**: Format conversion
+
+## Configuration
+
+### wrangler.toml
+
+```toml
+name = "metacogna-ai-worker"
+main = "workers/worker.js"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "PORTAL_UPDATES"
+id = "kv-namespace-id"
+
+[vars]
+# Environment variables
+```
+
+## Deployment
+
+Deploy workers:
+
+```bash
+cd metacogna.ai-landing
+bun wrangler deploy --name metacogna-ai-worker
+```
+
+Or use individual worker files:
+
+```bash
+bun wrangler deploy workers/worker.js
+bun wrangler deploy workers/lead-ingest.ts
+```
+
+## KV Setup
+
+Create KV namespace:
+
+```bash
+bun wrangler kv:namespace create "PORTAL_UPDATES"
+```
+
+Update `wrangler.toml` with the namespace ID.
+
+## Related Documentation
+
+- [Frontend Services](/metacogna-ai-landing/frontend/services) - Service layer
+- [Frontend Components](/metacogna-ai-landing/frontend/components) - Components
+

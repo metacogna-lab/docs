@@ -1,87 +1,168 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "MetaCogna Suite",
   "colors": {
-    "primary": "#16A34A",
+    "primary": "#10b981",
     "light": "#07C983",
     "dark": "#15803D"
   },
   "favicon": "/favicon.svg",
+  "openapi": "api-reference/openapi.json",
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  },
   "navigation": {
-    "tabs": [
+    "groups": [
       {
-        "tab": "Guides",
-        "groups": [
+        "group": "Getting Started",
+        "pages": [
+          "index",
+          "quickstart",
+          "development"
+        ]
+      },
+      {
+        "group": "Gateway API",
+        "pages": [
+          "gateway-api/overview",
           {
-            "group": "Getting started",
+            "group": "API",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "gateway-api/api/authentication",
+              "gateway-api/api/routing"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Backend",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "gateway-api/backend/worker",
+              "gateway-api/backend/shared-package"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
-        "groups": [
+        "group": "MetaCogna RAG",
+        "pages": [
+          "metacogna-rag/overview",
           {
-            "group": "API documentation",
+            "group": "API",
             "pages": [
-              "api-reference/introduction"
+              "metacogna-rag/api/endpoints",
+              "metacogna-rag/api/chat-endpoint"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Frontend",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "metacogna-rag/frontend/views",
+              "metacogna-rag/frontend/components"
+            ]
+          },
+          {
+            "group": "Backend",
+            "pages": [
+              "metacogna-rag/backend/worker",
+              "metacogna-rag/backend/services"
+            ]
+          },
+          {
+            "group": "Design",
+            "pages": [
+              "metacogna-rag/design/system"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MetaCogna.ai Landing",
+        "pages": [
+          "metacogna-ai-landing/overview",
+          {
+            "group": "Frontend",
+            "pages": [
+              "metacogna-ai-landing/frontend/components",
+              "metacogna-ai-landing/frontend/services"
+            ]
+          },
+          {
+            "group": "API",
+            "pages": [
+              "metacogna-ai-landing/api/workers"
+            ]
+          },
+          {
+            "group": "Design",
+            "pages": [
+              "metacogna-ai-landing/design/system"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Parti Architecture",
+        "pages": [
+          "parti-architecture/overview",
+          {
+            "group": "API",
+            "pages": [
+              "parti-architecture/api/supervisor",
+              "parti-architecture/api/agents"
+            ]
+          },
+          {
+            "group": "Frontend",
+            "pages": [
+              "parti-architecture/frontend/canvas"
+            ]
+          },
+          {
+            "group": "Backend",
+            "pages": [
+              "parti-architecture/backend/supervisor",
+              "parti-architecture/backend/agents"
+            ]
+          },
+          {
+            "group": "Design",
+            "pages": [
+              "parti-architecture/design/architecture"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Design System",
+        "pages": [
+          "design/system",
+          "design/guide",
+          "design/review-checklist",
+          "design/templates",
+          "design/components",
+          "design/tailwind-config",
+          "design/baseline-components",
+          "design/application-review",
+          {
+            "group": "Project Reviews",
+            "pages": [
+              "design/reviews/metacogna-rag-design",
+              "design/reviews/metacogna-ai-landing-design",
+              "design/reviews/parti-architecture-design"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/light.svg",
@@ -90,33 +171,17 @@
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "GitHub",
+        "href": "https://github.com/metacogna-lab",
+        "icon": "github"
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/metacogna-lab",
+      "github": "https://github.com/metacogna-lab",
+      "linkedin": "https://linkedin.com/company/metacogna-lab"
     }
   }
 }

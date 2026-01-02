@@ -1,0 +1,335 @@
+---
+title: "API Endpoints"
+description: "Complete API reference for MetaCogna RAG Worker"
+---
+
+## Base URL
+
+- **Local**: `http://localhost:8787`
+- **Production**: `https://parti.metacogna.ai`
+
+## Authentication
+
+All authenticated endpoints require a session cookie:
+
+```
+Cookie: pratejra_session=<token>
+```
+
+Session cookies are set on login and expire after 7 days.
+
+## Endpoints
+
+### Health & Debug
+
+#### GET /
+
+Service information and available endpoints.
+
+<ParamField body="response">
+```json
+{
+  "service": "metacogna-api",
+  "version": "1.0.0",
+  "status": "ok",
+  "endpoints": {
+    "health": "/api/health",
+    "auth": "/api/auth/login",
+    "signup": "/api/signup (admin-only)",
+    "ingest": "/api/ingest",
+    "search": "/api/search",
+    "graph": "/api/graph",
+    "chat": "/api/chat"
+  }
+}
+```
+</ParamField>
+
+#### GET /api/health
+
+Health check endpoint.
+
+<ParamField body="response">
+```json
+{
+  "status": "ok",
+  "timestamp": 1704067200000,
+  "service": "metacogna"
+}
+```
+</ParamField>
+
+### Authentication
+
+#### POST /api/auth/login
+
+User login with SHA-256 hashed credentials.
+
+<ParamField body="request">
+```json
+{
+  "username": "testuser",
+  "password": "sha256-hashed-password"
+}
+```
+</ParamField>
+
+<Note>
+Password must be SHA-256 hashed: `SHA256(username + password)`
+</Note>
+
+<ParamField body="response">
+```json
+{
+  "success": true,
+  "user": {
+    "id": "user-uuid",
+    "username": "testuser",
+    "email": "test@example.com",
+    "name": "Test User",
+    "isAdmin": false,
+    "goals": "Learn RAG systems",
+    "lastLogin": 1704067200000
+  },
+  "token": "session-token"
+}
+```
+</ParamField>
+
+Session cookie is set automatically with 7-day expiry.
+
+#### POST /api/signup
+
+**Admin-only** endpoint to create new users.
+
+<Warning>
+Only admin users can create new accounts. Non-admin users see "Contact administrator" message.
+</Warning>
+
+<ParamField body="request" type="multipart/form-data">
+```
+name=Alice Johnson
+email=alice@example.com
+password=SecurePass123!
+goals=Build RAG system for research papers
+files[]=<file1.md>
+files[]=<file2.pdf>
+```
+</ParamField>
+
+<ParamField body="response">
+```json
+{
+  "success": true,
+  "userId": "user-20250101-uuid",
+  "goalsSummary": "Build RAG system, learn vector databases",
+  "filesUploaded": 2,
+  "files": [
+    {
+      "id": "doc-uuid-1",
+      "filename": "file1.md",
+      "r2Key": "users/user-uuid/documents/doc-uuid-1-file1.md",
+      "uploadedAt": 1704067200000
+    }
+  ]
+}
+```
+</ParamField>
+
+**Notes:**
+- Goals are automatically summarized using Workers AI
+- Files are uploaded to R2: `users/{userId}/documents/{docId}-{filename}`
+- User ID is generated as UUID v4
+
+### Documents
+
+#### POST /api/ingest
+
+Upload documents for indexing.
+
+<ParamField body="request" type="multipart/form-data">
+```
+userId=user-uuid
+file=<document.pdf>
+metadata={"author": "Alice", "category": "Research"}
+```
+</ParamField>
+
+<ParamField body="response">
+```json
+{
+  "success": true,
+  "documentId": "doc-uuid",
+  "r2Key": "users/user-uuid/documents/doc-uuid-document.pdf",
+  "chunks": 28,
+  "graphNodes": 12,
+  "status": "indexed"
+}
+```
+</ParamField>
+
+**Pipeline Stages:**
+1. **Chunking (0-29%)** - Text splitting into semantic chunks
+2. **Embedding (30-59%)** - Vector embedding generation
+3. **Graph Extraction (60-89%)** - Entity and relationship extraction
+4. **Finalizing (90-100%)** - Final indexing
+
+#### GET /api/documents
+
+Get all documents for authenticated user.
+
+<ParamField body="response">
+```json
+{
+  "documents": [
+    {
+      "id": "doc-001",
+      "userId": "user-uuid",
+      "title": "RAG System Overview",
+      "r2Key": "users/user-uuid/documents/doc-001-overview.md",
+      "uploadedAt": 1704067200000,
+      "status": "indexed",
+      "progress": 100,
+      "chunkCount": 42,
+      "metadata": {
+        "author": "Alice Chen",
+        "category": "Research",
+        "tags": "RAG, Embeddings"
+      }
+    }
+  ]
+}
+```
+</ParamField>
+
+**Status Values:**
+- `processing` - Ingestion in progress
+- `indexed` - Successfully indexed
+- `error` - Ingestion failed
+
+#### POST /api/documents/reindex
+
+Reindex all documents (maintenance operation).
+
+<ParamField body="response">
+```json
+{
+  "success": true,
+  "documentsReindexed": 42
+}
+```
+</ParamField>
+
+#### DELETE /api/documents/purge-errors
+
+Remove all documents with error status.
+
+<ParamField body="response">
+```json
+{
+  "success": true,
+  "documentsPurged": 3
+}
+```
+</ParamField>
+
+### Search
+
+#### GET /api/search
+
+Semantic vector search.
+
+<ParamField query="query" type="string">
+Search query string
+</ParamField>
+
+<ParamField query="userId" type="string">
+User ID for filtering
+</ParamField>
+
+<ParamField query="topK" type="number" default="5">
+Number of results to return
+</ParamField>
+
+<ParamField body="response">
+```json
+{
+  "results": [
+    {
+      "id": "chunk-uuid",
+      "documentId": "doc-uuid",
+      "text": "Retrieval-Augmented Generation...",
+      "score": 0.89,
+      "metadata": {
+        "documentTitle": "RAG Overview",
+        "chunkIndex": 5
+      }
+    }
+  ]
+}
+```
+</ParamField>
+
+### Knowledge Graph
+
+#### GET /api/graph
+
+Get knowledge graph nodes and relationships.
+
+<ParamField query="userId" type="string">
+User ID for filtering
+</ParamField>
+
+<ParamField body="response">
+```json
+{
+  "nodes": [
+    {
+      "id": "entity-1",
+      "label": "Artificial Intelligence",
+      "type": "concept",
+      "documentIds": ["doc-1", "doc-2"]
+    }
+  ],
+  "edges": [
+    {
+      "source": "entity-1",
+      "target": "entity-2",
+      "type": "relates_to",
+      "strength": 0.85
+    }
+  ]
+}
+```
+</ParamField>
+
+## Rate Limiting
+
+Chat endpoint has rate limiting:
+- **Limit**: 10 requests per minute per user
+- **Headers**: `X-RateLimit-Remaining`, `X-RateLimit-Reset`
+- **Status**: `429` when limit exceeded
+
+## Error Responses
+
+All errors follow this format:
+
+```json
+{
+  "error": "Error message",
+  "success": false
+}
+```
+
+Common status codes:
+- `400` - Bad Request (validation errors)
+- `401` - Unauthorized (authentication required)
+- `404` - Not Found
+- `429` - Too Many Requests (rate limit exceeded)
+- `500` - Internal Server Error
+
+## Related Documentation
+
+- [Chat Endpoint](/metacogna-rag/api/chat-endpoint) - Detailed chat API documentation
+- [Backend Worker](/metacogna-rag/backend/worker) - Worker implementation details
+

@@ -1,0 +1,659 @@
+---
+title: "Page Templates"
+description: "Reusable templates for common documentation page types"
+---
+
+Use these templates as starting points for creating new documentation pages. Each template follows Paper UI principles and Mintlify best practices.
+
+## Overview Page Template
+
+Use for project, module, or major feature overviews.
+
+```mdx
+---
+title: "Project Name Overview"
+description: "Brief description of the project and its purpose"
+---
+
+[1-2 paragraph introduction explaining what the project is and why it exists]
+
+## Architecture
+
+[Mermaid diagram showing system architecture or component relationships]
+
+\`\`\`mermaid
+graph TB
+    Component1[Component 1] --> Component2[Component 2]
+    Component2 --> Component3[Component 3]
+\`\`\`
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Feature Name" icon="icon-name">
+    Brief description of the feature and its benefits.
+  </Card>
+  <Card title="Feature Name" icon="icon-name">
+    Brief description of the feature and its benefits.
+  </Card>
+  <Card title="Feature Name" icon="icon-name">
+    Brief description of the feature and its benefits.
+  </Card>
+  <Card title="Feature Name" icon="icon-name">
+    Brief description of the feature and its benefits.
+  </Card>
+</CardGroup>
+
+## Technology Stack
+
+### Backend
+
+- Technology 1 - Purpose/description
+- Technology 2 - Purpose/description
+- Technology 3 - Purpose/description
+
+### Frontend
+
+- Technology 1 - Purpose/description
+- Technology 2 - Purpose/description
+
+## Quick Start
+
+### Prerequisites
+
+- Requirement 1
+- Requirement 2
+- Requirement 3
+
+### Installation
+
+\`\`\`bash
+# Install dependencies
+bun install
+\`\`\`
+
+### Development
+
+\`\`\`bash
+# Start development server
+bun run dev
+\`\`\`
+
+<Note>
+Additional setup or configuration notes if needed.
+</Note>
+
+## Project Structure
+
+\`\`\`
+project/
+├── folder1/
+│   ├── file1.ext
+│   └── file2.ext
+├── folder2/
+│   └── file3.ext
+└── file4.ext
+\`\`\`
+
+## Core Concepts
+
+### Concept 1
+
+Explanation of the first core concept.
+
+### Concept 2
+
+Explanation of the second core concept.
+
+## Related Documentation
+
+- [API Reference](/path) - Complete API documentation
+- [Frontend Guide](/path) - Frontend implementation details
+- [Backend Guide](/path) - Backend architecture and services
+- [Design System](/path) - Design system and UI components
+```
+
+## API Endpoint Template
+
+Use for documenting individual API endpoints.
+
+```mdx
+---
+title: "Endpoint Name"
+description: "Brief description of what the endpoint does"
+---
+
+## Base URL
+
+- **Local**: `http://localhost:port`
+- **Production**: `https://production.url`
+
+## Endpoint
+
+### METHOD /path/to/endpoint
+
+[Brief description of what this endpoint does and when to use it]
+
+<Note>
+Important notes about authentication, rate limits, or special requirements.
+</Note>
+
+#### Request
+
+<ParamField body="request">
+\`\`\`json
+{
+  "field1": "value1",
+  "field2": "value2"
+}
+\`\`\`
+</ParamField>
+
+#### Request Parameters
+
+**field1** (required, string)
+Description of the parameter, including constraints and examples.
+
+**field2** (optional, number, default: 0)
+Description of the optional parameter.
+
+**field3** (required, object)
+Description of the object parameter.
+
+**field3.property1** (required, string)
+Description of nested property.
+
+#### Response
+
+<ParamField body="response">
+\`\`\`json
+{
+  "success": true,
+  "data": {
+    "field1": "value1",
+    "field2": "value2"
+  }
+}
+\`\`\`
+</ParamField>
+
+#### Response Fields
+
+**success** (boolean)
+Indicates whether the request was successful.
+
+**data** (object)
+Response data object.
+
+**data.field1** (string)
+Description of response field.
+
+#### Error Responses
+
+| Code | Error Code | Description |
+|------|------------|-------------|
+| 400 | INVALID_REQUEST | Description of error |
+| 401 | UNAUTHORIZED | Authentication required |
+| 404 | NOT_FOUND | Resource not found |
+| 500 | INTERNAL_ERROR | Server error |
+
+## Example Request
+
+\`\`\`typescript
+const response = await fetch('/api/endpoint', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer token'
+  },
+  body: JSON.stringify({
+    field1: 'value1',
+    field2: 'value2'
+  })
+});
+
+const data = await response.json();
+\`\`\`
+
+## Related Documentation
+
+- [Other Endpoint](/path) - Related endpoint documentation
+- [Authentication](/path) - Authentication guide
+- [Error Handling](/path) - Error response format
+```
+
+## Component Documentation Template
+
+Use for documenting React components, UI components, or reusable modules.
+
+```mdx
+---
+title: "Component Name"
+description: "Brief description of the component and its purpose"
+---
+
+[Brief introduction to the component, what it does, and when to use it]
+
+## Usage
+
+\`\`\`typescript
+import { ComponentName } from './components';
+
+<ComponentName prop1="value" prop2={value}>
+  Content
+</ComponentName>
+\`\`\`
+
+## Props
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| prop1 | string | Yes | - | Description of prop1 |
+| prop2 | number | No | 0 | Description of prop2 |
+| prop3 | boolean | No | false | Description of prop3 |
+| prop4 | object | No | {} | Description of prop4 |
+| children | ReactNode | No | - | Child content |
+
+## Examples
+
+### Basic Usage
+
+\`\`\`typescript
+<ComponentName prop1="value">
+  Basic content
+</ComponentName>
+\`\`\`
+
+### Advanced Usage
+
+\`\`\`typescript
+<ComponentName 
+  prop1="value"
+  prop2={42}
+  prop3={true}
+>
+  <ChildComponent />
+  More content
+</ComponentName>
+\`\`\`
+
+### With Event Handlers
+
+\`\`\`typescript
+const handleEvent = (data: EventData) => {
+  console.log('Event:', data);
+};
+
+<ComponentName 
+  prop1="value"
+  onEvent={handleEvent}
+/>
+\`\`\`
+
+## Styling
+
+[If relevant, describe styling options, CSS classes, or theme integration]
+
+\`\`\`typescript
+// Custom styling example
+<ComponentName 
+  className="custom-class"
+  style={{ color: 'red' }}
+/>
+\`\`\`
+
+## Related Documentation
+
+- [Other Component](/path) - Related component
+- [Design System](/path) - Design system guidelines
+- [Parent Component](/path) - Component that uses this
+```
+
+## Architecture Documentation Template
+
+Use for documenting system architecture, design patterns, or technical deep-dives.
+
+```mdx
+---
+title: "Architecture Name"
+description: "Description of the architectural pattern or system"
+---
+
+[Introduction to the architecture, its purpose, and high-level overview]
+
+## Overview
+
+[High-level explanation of the architecture]
+
+\`\`\`mermaid
+graph TB
+    A[Component A] --> B[Component B]
+    B --> C[Component C]
+    A --> D[Component D]
+\`\`\`
+
+## Design Principles
+
+- **Principle 1**: Explanation
+- **Principle 2**: Explanation
+- **Principle 3**: Explanation
+
+## Components
+
+### Component A
+
+Description of Component A's role and responsibilities.
+
+**Key Features:**
+- Feature 1
+- Feature 2
+- Feature 3
+
+### Component B
+
+Description of Component B's role and responsibilities.
+
+## Data Flow
+
+\`\`\`mermaid
+sequenceDiagram
+    participant Client
+    participant ServiceA
+    participant ServiceB
+    participant Database
+    
+    Client->>ServiceA: Request
+    ServiceA->>ServiceB: Process
+    ServiceB->>Database: Query
+    Database-->>ServiceB: Data
+    ServiceB-->>ServiceA: Result
+    ServiceA-->>Client: Response
+\`\`\`
+
+## Implementation Details
+
+### Pattern 1
+
+Explanation of implementation pattern 1.
+
+\`\`\`typescript
+// Code example showing pattern
+\`\`\`
+
+### Pattern 2
+
+Explanation of implementation pattern 2.
+
+## Trade-offs
+
+| Aspect | Benefit | Trade-off |
+|--------|---------|-----------|
+| Design Decision 1 | Benefit | Trade-off |
+| Design Decision 2 | Benefit | Trade-off |
+
+## Related Documentation
+
+- [Component Details](/path) - Detailed component documentation
+- [API Reference](/path) - API documentation
+- [Design System](/path) - Design system documentation
+```
+
+## Configuration Guide Template
+
+Use for documenting configuration options, settings, or setup guides.
+
+```mdx
+---
+title: "Configuration Guide"
+description: "How to configure and customize the system"
+---
+
+[Introduction to configuration, why it matters, and when to configure]
+
+## Configuration File
+
+Configuration is managed through `config.json`:
+
+\`\`\`json
+{
+  "setting1": "value1",
+  "setting2": "value2",
+  "setting3": {
+    "nested": "value"
+  }
+}
+\`\`\`
+
+## Environment Variables
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| VAR_NAME_1 | Yes | - | Description |
+| VAR_NAME_2 | No | default-value | Description |
+| VAR_NAME_3 | No | - | Description |
+
+## Settings
+
+### Setting 1
+
+Description of setting 1.
+
+**Type**: `string`  
+**Required**: Yes  
+**Example**: `"value"`
+
+\`\`\`json
+{
+  "setting1": "example-value"
+}
+\`\`\`
+
+### Setting 2
+
+Description of setting 2.
+
+**Type**: `number`  
+**Required**: No  
+**Default**: `0`
+
+<Note>
+Important notes about this setting.
+</Note>
+
+## Advanced Configuration
+
+### Option A
+
+Advanced configuration option A.
+
+\`\`\`typescript
+// Advanced configuration example
+\`\`\`
+
+### Option B
+
+Advanced configuration option B.
+
+## Validation
+
+Configuration is validated on startup:
+
+- Validation rule 1
+- Validation rule 2
+- Validation rule 3
+
+<Warning>
+Invalid configuration will cause startup errors.
+</Warning>
+
+## Related Documentation
+
+- [Getting Started](/path) - Initial setup guide
+- [API Reference](/path) - API documentation
+- [Troubleshooting](/path) - Common issues
+```
+
+## Quick Reference Template
+
+Use for cheat sheets, command references, or quick lookups.
+
+```mdx
+---
+title: "Quick Reference"
+description: "Quick reference for common tasks and commands"
+---
+
+## Commands
+
+### Command Category 1
+
+**Command 1**
+\`\`\`bash
+command --option value
+\`\`\`
+Description of what the command does.
+
+**Command 2**
+\`\`\`bash
+command --option value
+\`\`\`
+Description of what the command does.
+
+### Command Category 2
+
+**Command 3**
+\`\`\`bash
+command --option value
+\`\`\`
+Description of what the command does.
+
+## Common Patterns
+
+### Pattern 1
+
+\`\`\`typescript
+// Code pattern example
+\`\`\`
+Explanation of when to use this pattern.
+
+### Pattern 2
+
+\`\`\`typescript
+// Code pattern example
+\`\`\`
+Explanation of when to use this pattern.
+
+## Reference Tables
+
+### Option 1
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| value1 | Description | yes |
+| value2 | Description | no |
+
+### Option 2
+
+| Value | Meaning |
+|-------|---------|
+| A | Description |
+| B | Description |
+
+## Related Documentation
+
+- [Detailed Guide](/path) - Complete documentation
+- [Examples](/path) - Usage examples
+```
+
+## Troubleshooting Template
+
+Use for common issues, debugging guides, or FAQ sections.
+
+```mdx
+---
+title: "Troubleshooting"
+description: "Common issues and solutions"
+---
+
+## Common Issues
+
+### Issue 1: Error Message
+
+**Symptoms:**
+- Symptom 1
+- Symptom 2
+
+**Cause:**
+Explanation of what causes this issue.
+
+**Solution:**
+Step-by-step solution.
+
+\`\`\`bash
+# Fix command
+\`\`\`
+
+<Note>
+Additional notes or tips.
+</Note>
+
+### Issue 2: Another Error
+
+**Symptoms:**
+- Symptom 1
+- Symptom 2
+
+**Cause:**
+Explanation of cause.
+
+**Solution:**
+Solution steps.
+
+## Debugging
+
+### Enable Debug Mode
+
+\`\`\`bash
+# Enable debug logging
+export DEBUG=true
+\`\`\`
+
+### Check Logs
+
+\`\`\`bash
+# View logs
+tail -f logs/app.log
+\`\`\`
+
+## FAQ
+
+**Q: Question 1?**  
+A: Answer to question 1.
+
+**Q: Question 2?**  
+A: Answer to question 2.
+
+**Q: Question 3?**  
+A: Answer to question 3.
+
+## Getting Help
+
+If you're still experiencing issues:
+
+1. Check the [documentation](/path)
+2. Search [GitHub issues](/path)
+3. Contact [support](/path)
+
+## Related Documentation
+
+- [Getting Started](/path) - Setup guide
+- [Configuration](/path) - Configuration options
+- [API Reference](/path) - API documentation
+```
+
+## Related Documentation
+
+- [Design Guide](/design/guide) - Comprehensive writing guidelines
+- [Design System](/design/system) - Design system principles
+- [Review Checklist](/design/review-checklist) - Quality checklist
+

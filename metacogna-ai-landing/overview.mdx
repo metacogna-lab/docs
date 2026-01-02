@@ -1,0 +1,129 @@
+---
+title: "MetaCogna.ai Landing Overview"
+description: "Landing experience showcasing executive dashboards and project galleries"
+---
+
+MetaCogna.ai Landing is a marketing and landing site that demonstrates MetaCogna Lab's engagement model through story-driven hero sections, embedded portal previews, and project galleries.
+
+## Mission
+
+Metacogna Lab partners with operators who need clear situational awareness across AI initiatives. This landing experience demonstrates how we choreograph executive dashboards, project galleries, and decision logs into a single narrative so prospective partners can glimpse the command center we will build for them.
+
+## Experience Overview
+
+- **Story-driven content**: Hero, methodology, and services sections explain engagement model
+- **Embedded portal preview**: Real-time decisions, pipelines, and project states
+- **Seamless integrations**: Contact, login, and HubSpot integrations
+- **Handcrafted brand system**: Consistent visual identity across all screens
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Hero Section" icon="sparkles">
+    Story-driven hero with brand identity and value proposition
+  </Card>
+  <Card title="Project Gallery" icon="grid">
+    Showcase of active projects with status indicators
+  </Card>
+  <Card title="Portal Dashboard" icon="layout-dashboard">
+    Embedded preview of executive command center
+  </Card>
+  <Card title="HubSpot Integration" icon="link">
+    Lead capture and CRM integration
+  </Card>
+  <Card title="Login System" icon="key">
+    Steganographic login with GitHub OAuth
+  </Card>
+  <Card title="Services Base" icon="briefcase">
+    Executive operations and solutions design services
+  </Card>
+</CardGroup>
+
+## Technology Stack
+
+### Frontend
+
+- **React 19** - UI framework
+- **Vite** - Build tool and dev server
+- **Framer Motion** - Animations
+- **Tailwind CSS** - Styling
+- **TypeScript** - Type safety
+
+### Backend
+
+- **Cloudflare Workers** - Edge functions
+- **Workers KV** - Key-value storage
+- **HubSpot API** - CRM integration
+
+## Quick Start
+
+### Prerequisites
+
+- **Bun** (recommended) or Node.js
+- **Gemini API Key** (for some features)
+
+### Installation
+
+```bash
+cd metacogna.ai-landing
+bun install
+```
+
+### Environment Setup
+
+Create `.env.local`:
+
+```bash
+VITE_GEMINI_API_KEY=your-gemini-key
+```
+
+### Development
+
+```bash
+# Start dev server
+bun run dev
+
+# Build for production
+bun run build
+
+# Preview production build
+bun run preview
+```
+
+### Testing
+
+```bash
+# Type checking
+bun run lint
+```
+
+## Project Structure
+
+```
+metacogna.ai-landing/
+├── components/          # React components
+│   ├── HeroSection.tsx
+│   ├── PortalDashboard.tsx
+│   ├── ProjectGallery.tsx
+│   ├── ProjectGrid.tsx
+│   └── PaperComponents.tsx
+├── services/           # Service layer
+│   ├── portalService.ts
+│   ├── authService.ts
+│   └── pdfGenerator.ts
+├── workers/            # Cloudflare Workers
+│   ├── gateway.ts
+│   ├── lead-ingest.ts
+│   └── worker.js
+├── data/               # Static data
+│   └── profile.ts
+└── docs/               # Documentation
+```
+
+## Related Documentation
+
+- [Frontend Components](/metacogna-ai-landing/frontend/components) - React components
+- [Frontend Services](/metacogna-ai-landing/frontend/services) - Service layer
+- [API Workers](/metacogna-ai-landing/api/workers) - Cloudflare Workers
+- [Design System](/metacogna-ai-landing/design/system) - Design system specification
+

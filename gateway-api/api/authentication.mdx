@@ -1,0 +1,218 @@
+---
+title: "Authentication API"
+description: "JWT-based authentication and token management"
+---
+
+The Gateway API provides authentication endpoints for admin login and guest token generation.
+
+## Endpoints
+
+### POST /auth/login
+
+Authenticate an admin user and receive a JWT token.
+
+<Note>
+Admin credentials are stored in R2 bucket (`metacogna-accounts`) with SHA-256 hashed passwords.
+</Note>
+
+#### Request Body
+
+```json
+{
+  "username": "admin",
+  "password": "plaintext-password"
+}
+```
+
+#### Response (Success)
+
+```json
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "username": "admin",
+    "role": "admin"
+  }
+}
+```
+
+#### Response (Error)
+
+```json
+{
+  "route": "AUTH",
+  "status": 401,
+  "code": "INVALID_CREDENTIALS",
+  "message": "Invalid credentials",
+  "requestId": "uuid",
+  "timestamp": "2024-01-01T00:00:00.000Z"
+}
+```
+
+#### Authentication Flow
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Gateway
+    participant R2
+    
+    Client->>Gateway: POST /auth/login<br/>{username, password}
+    Gateway->>R2: Get auth/admins/{username}.json
+    R2-->>Gateway: {salt, hash, role}
+    Gateway->>Gateway: Hash(salt + password)
+    alt Hash matches
+        Gateway->>Gateway: Create JWT token
+        Gateway-->>Client: {success: true, token, user}
+    else Hash mismatch
+        Gateway-->>Client: 401 Invalid credentials
+    end
+```
+
+### POST /auth/guest
+
+Generate a guest token for unauthenticated access to certain routes.
+
+#### Request Body
+
+```json
+{
+  "route": "BUILD" // Optional: "BUILD", "KV", "CORE" (defaults to "BUILD")
+}
+```
+
+#### Response
+
+```json
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "route": "BUILD"
+}
+```
+
+## JWT Token Structure
+
+Tokens are signed JWTs with the following claims:
+
+```typescript
+interface GatewayTokenClaims {
+  projectId: string;        // User ID or "guest"
+  route: ProjectRoute;      // "AUTH" | "KV" | "BUILD" | "CORE"
+  scopes: string[];         // ["admin"] | ["guest"]
+  environment: string;      // "staging" | "production"
+  issuedBy: string;         // "gateway.metacogna.ai"
+}
+```
+
+### Default Values
+
+- **Issuer**: `gateway.metacogna.ai`
+- **Audience**: `metacogna-clients`
+- **Algorithm**: `HS256`
+- **Expiration**: `1h` (configurable)
+
+## Credential Storage
+
+Admin credentials are stored in R2 bucket `metacogna-accounts`:
+
+**Path**: `auth/admins/{username}.json`
+
+**Structure**:
+```json
+{
+  "username": "admin",
+  "salt": "random-salt-string",
+  "hash": "sha256-hash-of-salt+password",
+  "role": "admin"
+}
+```
+
+### Password Hashing
+
+Passwords are hashed using SHA-256:
+
+```typescript
+// Pseudocode
+const salt = generateRandomSalt();
+const hash = SHA256(salt + password);
+// Store {salt, hash} in R2
+```
+
+During login, the gateway:
+1. Retrieves `{salt, hash}` from R2
+2. Computes `SHA256(salt + providedPassword)`
+3. Compares computed hash with stored hash
+
+## Token Usage
+
+Include the token in the `Authorization` header:
+
+```http
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+### Route Access Rules
+
+| Route | Token Required | Token Scopes |
+|-------|---------------|--------------|
+| `/build` | Always | `admin` or `guest` |
+| `/kv` | Optional | Any (if provided, must match route) |
+| `/core` | Optional | Any (if provided, must match route) |
+
+## Error Codes
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `INVALID_REQUEST` | 400 | Missing username or password |
+| `INVALID_CREDENTIALS` | 401 | Invalid username/password combination |
+| `MISSING_TOKEN` | 401 | Required token not provided |
+| `INVALID_TOKEN` | 403 | Token invalid or expired |
+| `ROUTE_MISMATCH` | 403 | Token route doesn't match requested route |
+
+## Code Examples
+
+### Admin Login
+
+```typescript
+const response = await fetch('https://api.metacogna.ai/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    username: 'admin',
+    password: 'secure-password'
+  })
+});
+
+const { token, user } = await response.json();
+// Store token for subsequent requests
+```
+
+### Guest Token Generation
+
+```typescript
+const response = await fetch('https://api.metacogna.ai/auth/guest', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ route: 'BUILD' })
+});
+
+const { token } = await response.json();
+```
+
+### Authenticated Request
+
+```typescript
+const response = await fetch('https://api.metacogna.ai/build/projects', {
+  headers: {
+    'Authorization': `Bearer ${token}`
+  }
+});
+```
+
+## Related Documentation
+
+- [Routing API](/gateway-api/api/routing) - Route configuration
+- [Shared Package](/gateway-api/backend/shared-package) - JWT implementation details
+

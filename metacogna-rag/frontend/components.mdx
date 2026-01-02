@@ -1,0 +1,295 @@
+---
+title: "Frontend Components"
+description: "Reusable React components and UI library"
+---
+
+The MetaCogna RAG frontend uses a component-based architecture with reusable Paper UI components and specialized application components.
+
+## Paper Components
+
+**File**: `components/PaperComponents.tsx`
+
+The Paper UI design system provides foundational components following the "Digital Paper" design philosophy.
+
+### PaperCard
+
+The fundamental building block for content containers.
+
+```typescript
+<PaperCard>
+  <h2>Document Title</h2>
+  <p>Document content...</p>
+</PaperCard>
+```
+
+**Props:**
+- `className` - Additional CSS classes
+- `variant` - Card variant style
+- `onClick` - Click handler
+
+### PaperButton
+
+Buttons with hard shadows and physical interaction feel.
+
+```typescript
+<PaperButton onClick={handleClick} variant="primary">
+  Click Me
+</PaperButton>
+```
+
+**Variants:**
+- `primary` - Solid ink background, paper text
+- `ghost` - Transparent background, ink text
+- `danger` - Warning/error styling
+
+**Props:**
+- `variant` - Button variant
+- `size` - Button size (sm, md, lg)
+- `icon` - Icon element (React node)
+- `disabled` - Disabled state
+
+### PaperInput
+
+Text input fields with Paper UI styling.
+
+```typescript
+<PaperInput
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+  placeholder="Enter text..."
+/>
+```
+
+### PaperBadge
+
+Status indicators and labels.
+
+```typescript
+<PaperBadge color="ink">SYSTEM_STATUS: ONLINE</PaperBadge>
+```
+
+**Colors:**
+- `ink` - Dark/primary
+- `accent` - Success/highlight
+- `warning` - Warning/alert
+
+### PaperModal
+
+Modal dialogs with overlay.
+
+```typescript
+<PaperModal isOpen={isOpen} onClose={handleClose}>
+  <h2>Modal Title</h2>
+  <p>Modal content...</p>
+</PaperModal>
+```
+
+### PaperTextArea
+
+Multi-line text input.
+
+```typescript
+<PaperTextArea
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+  rows={5}
+/>
+```
+
+### PaperSelect
+
+Dropdown select component.
+
+```typescript
+<PaperSelect
+  value={selected}
+  onChange={(e) => setSelected(e.target.value)}
+  options={options}
+/>
+```
+
+## Layout Components
+
+### Layout
+
+**File**: `components/Layout.tsx`
+
+Main application layout wrapper:
+
+- **Header**: Navigation and user info
+- **Sidebar**: View navigation (if applicable)
+- **Content Area**: Main view content
+- **Footer**: System status and links
+
+### ErrorBoundary
+
+**File**: `components/ErrorBoundary.tsx`
+
+React error boundary for graceful error handling:
+
+```typescript
+<ErrorBoundary fallback={<ErrorFallback />}>
+  <YourComponent />
+</ErrorBoundary>
+```
+
+**Features:**
+- Catches React errors
+- Displays error UI
+- Logs errors for debugging
+
+## Specialized Components
+
+### GraphAnalysis
+
+**File**: `components/GraphAnalysis.tsx`
+
+Knowledge graph analysis visualization:
+
+- Centrality metrics display
+- Cluster identification
+- Connection strength visualization
+- Node type distribution
+
+### GlobalToast
+
+**File**: `components/GlobalToast.tsx`
+
+Global toast notification system:
+
+```typescript
+// Usage in services
+toast.success('Document uploaded successfully');
+toast.error('Upload failed');
+toast.info('Processing...');
+```
+
+**Toast Types:**
+- `success` - Green, success messages
+- `error` - Red, error messages
+- `info` - Blue, informational messages
+- `warning` - Yellow, warning messages
+
+### GlobalAIModal
+
+**File**: `components/GlobalAIModal.tsx`
+
+AI-powered modal for interactive AI features:
+
+- Context-aware AI assistance
+- Streaming responses
+- Multi-turn conversations
+
+### SupervisorToast
+
+**File**: `components/SupervisorToast.tsx`
+
+Specialized toast for supervisor agent notifications:
+
+- High-confidence decisions
+- Urgent alerts
+- Decision summaries
+- Dismissible notifications
+
+### SupervisorWidget
+
+**File**: `components/SupervisorWidget.tsx`
+
+Widget displaying supervisor agent status:
+
+- Active decision count
+- Confidence levels
+- Monitoring status
+- Quick actions
+
+### SystemPromptAlert
+
+**File**: `components/SystemPromptAlert.tsx`
+
+Alert component for system prompt changes:
+
+- Notifies users of prompt updates
+- Shows prompt preview
+- Accept/dismiss actions
+
+## Component Patterns
+
+### Composition
+
+Components use composition patterns for flexibility:
+
+```typescript
+<PaperCard>
+  <PaperCard.Header>
+    <h2>Title</h2>
+  </PaperCard.Header>
+  <PaperCard.Body>
+    Content
+  </PaperCard.Body>
+  <PaperCard.Footer>
+    Actions
+  </PaperCard.Footer>
+</PaperCard>
+```
+
+### Props Interface
+
+All components use TypeScript interfaces:
+
+```typescript
+interface PaperButtonProps {
+  variant?: 'primary' | 'ghost' | 'danger';
+  size?: 'sm' | 'md' | 'lg';
+  icon?: React.ReactNode;
+  disabled?: boolean;
+  onClick?: () => void;
+  children: React.ReactNode;
+}
+```
+
+### Styling
+
+Components use Tailwind CSS with Paper UI theme:
+
+- Hard shadows: `shadow-[4px_4px_0px_0px_rgb(24,24,27)]`
+- Hard borders: `border-2 border-ink`
+- High contrast colors
+- No rounded corners (max 2px border-radius)
+
+## State Management
+
+Components integrate with Zustand store:
+
+```typescript
+import { useStore } from '../store';
+
+const MyComponent = () => {
+  const documents = useStore((state) => state.documents);
+  const updateDocuments = useStore((state) => state.updateDocuments);
+  
+  // Component logic
+};
+```
+
+## Animations
+
+Components use Framer Motion for animations:
+
+```typescript
+import { motion } from 'framer-motion';
+
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3 }}
+>
+  Content
+</motion.div>
+```
+
+## Related Documentation
+
+- [Frontend Views](/metacogna-rag/frontend/views) - View components and pages
+- [Design System](/metacogna-rag/design/system) - Paper UI design principles
+- [Backend Worker](/metacogna-rag/backend/worker) - Worker API
+

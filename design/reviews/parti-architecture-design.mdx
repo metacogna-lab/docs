@@ -1,0 +1,389 @@
+---
+title: "Parti Architecture Design Review"
+description: "Detailed design review and generalities for the Parti Architecture application"
+---
+
+This document provides a comprehensive design review of the Parti Architecture application, documenting design patterns, component usage, and design generalities.
+
+## Project Overview
+
+Parti Architecture is a prompt-driven architecture generation system that uses AI agents to create complete system architectures from natural language prompts. It features an interactive canvas, agent orchestration, and comprehensive observability.
+
+### Purpose
+
+- Generate system architectures from prompts
+- Multi-agent orchestration and coordination
+- Interactive canvas for architecture visualization
+- Settings and configuration management
+- Project management and versioning
+
+## Design Philosophy
+
+Parti Architecture extends Paper UI with complex interaction patterns:
+
+1. **Digital Paper**: Physical sheets with hard shadows
+2. **Complex Interactions**: Advanced canvas interactions, drag-and-drop
+3. **Observability**: Technical dashboards and metrics
+4. **Agent Visualization**: Graph-based agent state display
+5. **Professional Tools**: Settings, export, configuration interfaces
+
+## Color System Implementation
+
+### Current Implementation
+
+Uses basic Tailwind config with direct color values:
+
+```javascript
+colors: {
+  ink: '#18181b',
+  paper: '#ffffff',
+  accent: '#10b981',
+  surface: '#f4f4f5',
+}
+```
+
+### Issues
+
+- **No CSS Custom Properties**: Uses direct hex values
+- **No Dark Mode**: Dark mode not implemented
+- **Limited Configuration**: Basic setup without dark mode support
+
+<Warning>
+Migration to CSS custom properties recommended for consistency and dark mode support.
+</Warning>
+
+## Typography
+
+### Font Families
+
+- **Serif** (Playfair Display): Headings, card titles
+- **Sans-Serif** (Inter): Body text, UI labels
+- **Monospace** (JetBrains Mono): Technical content, IDs, metadata
+
+### Typography Patterns
+
+**Headings**:
+- Large serif fonts for main titles
+- Bold, tight tracking
+- Clear hierarchy
+
+**Body Text**:
+- Sans-serif for readability
+- Standard weights
+- Generous line-height
+
+**Technical Content**:
+- Monospace for IDs, metadata
+- Uppercase often
+- Small sizes for labels
+
+## Component Inventory
+
+### Core Components
+
+Parti Architecture has the most extensive component library:
+
+**Basic Components**:
+- PaperCard (enhanced with active states, onClick)
+- PaperButton (with icon support)
+- PaperInput, PaperTextArea
+- PaperBadge (with variants)
+- PaperModal
+- PaperSelect
+- PaperTabs
+
+**Advanced Components**:
+- PaperMetadataRibbon
+- PaperToast
+- PaperStepLoader
+- PaperCommandBar
+- PaperProgressDashboard
+- PaperZoomControls
+- PaperObservabilityDashboard
+- PaperDataDictionary
+- PaperBlueprintLibrary
+- PaperChangelog
+- PaperPromptGuidance
+- PaperArtefactBadge
+- PaperTooltipPreview
+- PaperThinkingOverlay
+- PaperInterruptOverlay
+- PaperReviewFooter
+- PaperViewToggle
+- PaperTaskTree
+- PaperBottomDock
+- PaperSlider
+- PaperSwitch
+- PaperConsole
+
+### Application Components
+
+- **SettingsRoot**: Comprehensive settings interface
+- **Settings Sections**: Intelligence, Profile, Export sections
+- **ApiKeyModal**: API key management
+- **SettingsRibbon**: Settings panel component
+
+## Layout Patterns
+
+### Main Application Layout
+
+**Canvas View**:
+- Full-screen interactive canvas
+- Zoom and pan controls
+- Stage nodes (PRD, Design, Data, Logic, API, Frontend, Deployment)
+- Artefact display
+- Bottom dock for details
+
+**Settings View**:
+- Tabbed interface
+- Sections: Intelligence, Profile, Export
+- Ribbon-style panel
+- Modal overlays for configuration
+
+### Canvas Layout
+
+**Stage Organization**:
+- Horizontal flow of stages
+- Stage nodes with icons
+- Artefact badges
+- Connection lines (visual)
+
+**Interaction Patterns**:
+- Click to select stages/artefacts
+- Zoom controls
+- Pan and drag
+- View toggles
+
+### Bottom Dock
+
+Collapsible dock panel with:
+- Tabs: Artifacts, Logs, Graph
+- Artefact list with actions
+- Log viewer
+- Graph visualization
+- Simulation controls
+
+## Navigation Patterns
+
+### View Toggles
+
+- Board view (canvas)
+- Settings view
+- Toggle buttons in header
+- View state management
+
+### Settings Navigation
+
+- Tab-based navigation (Intelligence, Profile, Export)
+- Sub-sections within tabs
+- Modal-based configuration
+- Ribbon panel overlay
+
+## Data Visualization Patterns
+
+### Graph Visualization
+
+- Agent activity graph
+- Node-based representation
+- Edge connections
+- Status indicators
+
+### Progress Dashboards
+
+- Stage progress indicators
+- Completion percentages
+- Status badges
+- Timeline visualization
+
+### Observability Dashboard
+
+- Metrics display (tokens, latency, cost)
+- Trace visualization
+- Performance indicators
+- Cost estimation
+
+## Unique Design Features
+
+### Interactive Canvas
+
+- Zoom and pan capabilities
+- Node selection
+- Drag interactions
+- View transformations
+
+### Agent Visualization
+
+- Real-time agent activity
+- Thinking overlays
+- Status indicators
+- Activity feeds
+
+### Interrupt System
+
+- Human-in-the-loop interrupts
+- Review overlays
+- Approval workflows
+- Feedback collection
+
+### Blueprint Library
+
+- Saved architecture templates
+- Load and delete operations
+- Metadata display
+- Version management
+
+### Task Tree
+
+- Hierarchical task representation
+- Progress tracking
+- Completion indicators
+
+## Form Patterns
+
+### Settings Forms
+
+- Intelligence configuration (model selection, tiers)
+- Profile settings
+- Export options
+- API key management
+
+### Configuration Patterns
+
+- Tabbed forms
+- Section grouping
+- Save/cancel actions
+- Validation and errors
+
+## Component Usage Patterns
+
+### Card Usage
+
+- Stage representation
+- Artefact containers
+- Settings sections
+- Information panels
+
+### Button Usage
+
+- Primary: Main actions (Generate, Deploy, Save)
+- Secondary: Alternative actions
+- Ghost: Navigation, toggles
+- Icon buttons for controls
+
+### Badge Usage
+
+- Artefact type indicators
+- Status badges
+- Stage labels
+- System status
+
+### Modal Usage
+
+- Settings configuration
+- API key management
+- Confirmations
+- Detail views
+
+## Consistency Assessment
+
+### Strengths
+
+- ✅ Most comprehensive component library
+- ✅ Advanced interaction patterns
+- ✅ Professional tool interfaces
+- ✅ Good component organization
+- ✅ Extensive functionality
+
+### Areas for Improvement
+
+- ❌ No dark mode support
+- ❌ Uses direct color values (not CSS custom properties)
+- ❌ Component complexity may be high for simple use cases
+- ❌ Some components may be over-engineered
+- ❌ Missing documentation for custom components
+
+<Note>
+While comprehensive, some components may benefit from simplification or extraction to shared library.
+</Note>
+
+## Recommendations
+
+### High Priority
+
+1. **Migrate to CSS Custom Properties**
+   - Update Tailwind config to use CSS variables
+   - Enable dark mode support
+   - Align with other applications
+
+2. **Implement Dark Mode**
+   - Add dark mode toggle
+   - Update all components
+   - Test all interfaces
+
+3. **Document Components**
+   - Create component API documentation
+   - Document usage patterns
+   - Provide examples
+
+### Medium Priority
+
+4. **Component Library Strategy**
+   - Extract core components to shared location
+   - Keep specialized components in app
+   - Create component reference guide
+
+5. **Simplify Complex Components**
+   - Review component complexity
+   - Extract reusable patterns
+   - Consider composition over complex components
+
+### Low Priority
+
+6. **Performance Optimization**
+   - Review animation performance
+   - Optimize canvas rendering
+   - Code splitting for large components
+
+## Design Generalities Summary
+
+**Overall Approach**: Comprehensive, professional, feature-rich architecture tool
+
+**Key Characteristics**:
+- Most extensive component library
+- Advanced interaction patterns
+- Complex canvas interface
+- Professional tool aesthetics
+- Comprehensive observability
+
+**Strengths**: Feature-complete, professional interfaces, extensive functionality
+
+**Weaknesses**: No dark mode, complex components, potential over-engineering
+
+**Component Complexity**: High - many specialized components for specific use cases
+
+## Component Complexity Analysis
+
+### Core Components (Standard)
+
+- PaperCard, PaperButton, PaperInput, etc.
+- Standard implementations
+- Good reusability
+
+### Specialized Components (App-Specific)
+
+- PaperBottomDock, PaperCanvas, PaperObservabilityDashboard
+- Highly specialized
+- Less reusable
+- Complex implementations
+
+### Recommendation
+
+Consider extracting core components while keeping specialized components app-specific.
+
+## Related Documentation
+
+- [Design System](/design/system) - Paper UI principles
+- [Application Review](/design/application-review) - Cross-application review
+- [Baseline Components](/design/baseline-components) - Standardized components
+- [Tailwind Configuration](/design/tailwind-config) - Setup guide
+
